@@ -7,6 +7,8 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.alex.guzhenren.Guzhenren;
 import net.alex.guzhenren.cultivation.CultivationManager;
+import net.alex.guzhenren.cultivation.EssenceManager;
+import net.alex.guzhenren.cultivation.RealmManager;
 import net.alex.guzhenren.cultivation.attachments.BasicAttachments;
 import net.alex.guzhenren.cultivation.attachments.EssenceAttachment;
 import net.alex.guzhenren.cultivation.enums.*;
@@ -23,6 +25,7 @@ import net.neoforged.neoforge.event.RegisterCommandsEvent;
 
 @EventBusSubscriber(modid = Guzhenren.MOD_ID)
 public class CultivationCommand {
+
     private CultivationCommand() {}
 
     @SubscribeEvent
@@ -31,34 +34,34 @@ public class CultivationCommand {
                 Commands.literal("cultivation")
                         .requires(s -> s.hasPermission(2))
 
-                        // ========== awaken ==========
+                        // ========== awaken (跨系统) ==========
                         .then(withOptionalTarget(
                                 Commands.literal("awaken"),
                                 CultivationCommand::awaken
                         ))
 
-                        // ========== rank <0-5> ==========
+                        // ========== rank <0-5> (RealmManager) ==========
                         .then(Commands.literal("rank")
                                 .then(withOptionalTarget(
                                         Commands.argument("value", IntegerArgumentType.integer(0, 5)),
                                         CultivationCommand::setRank
                                 )))
 
-                        // ========== stage <init|mid|up|peak> ==========
+                        // ========== stage <init|mid|up|peak> (RealmManager) ==========
                         .then(Commands.literal("stage")
                                 .then(stageBranch("init", Stage.INITIAL))
                                 .then(stageBranch("mid",  Stage.MIDDLE))
                                 .then(stageBranch("up",   Stage.UPPER))
                                 .then(stageBranch("peak", Stage.PEAK)))
 
-                        // ========== roll <0-100> ==========
+                        // ========== roll <0-100> (RealmManager) ==========
                         .then(Commands.literal("roll")
                                 .then(withOptionalTarget(
                                         Commands.argument("value", IntegerArgumentType.integer(0, 100)),
                                         CultivationCommand::setRoll
                                 )))
 
-                        // ========== essence <add|set|consume> <value> ==========
+                        // ========== essence <add|set|consume> <value> (EssenceManager) ==========
                         .then(Commands.literal("essence")
                                 .then(essenceBranch("add",     EssenceOp.ADD))
                                 .then(essenceBranch("set",     EssenceOp.SET))
@@ -70,7 +73,7 @@ public class CultivationCommand {
                                 CultivationCommand::info
                         ))
 
-                        // ========== reset ==========
+                        // ========== reset (跨系统) ==========
                         .then(withOptionalTarget(
                                 Commands.literal("reset"),
                                 CultivationCommand::reset
@@ -79,10 +82,6 @@ public class CultivationCommand {
     }
 
     //region Branch Builders
-    /**
-     * 把 "可选 target 参数" 包装到任意分支末端
-     * 调用方式: Commands.literal("xxx") → withOptionalTarget(literal, executor)
-     */
     private static <T extends ArgumentBuilder<CommandSourceStack, T>> T withOptionalTarget(
             T base, CommandExecutor exec
     ) {
@@ -92,7 +91,6 @@ public class CultivationCommand {
         return base;
     }
 
-    /** stage 子分支生成器 */
     private static ArgumentBuilder<CommandSourceStack, ?> stageBranch(String name, Stage stage) {
         return withOptionalTarget(
                 Commands.literal(name),
@@ -100,7 +98,6 @@ public class CultivationCommand {
         );
     }
 
-    /** essence 子分支生成器 */
     private static ArgumentBuilder<CommandSourceStack, ?> essenceBranch(String name, EssenceOp op) {
         return Commands.literal(name)
                 .then(withOptionalTarget(
@@ -115,7 +112,7 @@ public class CultivationCommand {
     private static int awaken(CommandContext<CommandSourceStack> ctx, ServerPlayer player) {
         boolean ok = CultivationManager.awaken(player, player.getRandom());
         if (ok) {
-            BasicAttachments b = CultivationManager.realm(player);
+            BasicAttachments b = RealmManager.realm(player);
             feedback(ctx, Component.literal("Awakened ").append(player.getDisplayName())
                     .append(": ").append(b.getAptitude().getDisplayName())
                     .append(" (roll=" + b.getAptitudeRoll() + ")"));
@@ -136,21 +133,21 @@ public class CultivationCommand {
             case 5 -> Rank.RANK_5;
             default -> throw new IllegalStateException("rank out of range: " + value);
         };
-        CultivationManager.setRank(player, rank);
+        RealmManager.setRank(player, rank);
         feedback(ctx, player.getDisplayName().copy().append(" rank → ").append(rank.getDisplayName()));
         return 1;
     }
 
     private static int setStage(CommandContext<CommandSourceStack> ctx, ServerPlayer player, Stage stage) {
-        CultivationManager.setStage(player, stage);
+        RealmManager.setStage(player, stage);
         feedback(ctx, player.getDisplayName().copy().append(" stage → ").append(stage.getDisplayName()));
         return 1;
     }
 
     private static int setRoll(CommandContext<CommandSourceStack> ctx, ServerPlayer player) {
         int value = IntegerArgumentType.getInteger(ctx, "value");
-        CultivationManager.setAptitudeRoll(player, value);
-        BasicAttachments b = CultivationManager.realm(player);
+        RealmManager.setAptitudeRoll(player, value);
+        BasicAttachments b = RealmManager.realm(player);
         feedback(ctx, player.getDisplayName().copy()
                 .append(" roll → " + value + " (").append(b.getAptitude().getDisplayName()).append(")"));
         return 1;
@@ -158,12 +155,12 @@ public class CultivationCommand {
 
     private static int essenceOp(CommandContext<CommandSourceStack> ctx, ServerPlayer player, EssenceOp op) {
         long value = LongArgumentType.getLong(ctx, "value");
-        EssenceAttachment e = CultivationManager.essence(player);
+        EssenceAttachment e = EssenceManager.essence(player);
         switch (op) {
-            case ADD     -> CultivationManager.addEssence(player, value);
-            case SET     -> CultivationManager.setCurrentEssence(player, value);
+            case ADD     -> EssenceManager.addEssence(player, value);
+            case SET     -> EssenceManager.setCurrentEssence(player, value);
             case CONSUME -> {
-                boolean ok = CultivationManager.consumeEssence(player, value);
+                boolean ok = EssenceManager.consumeEssence(player, value);
                 if (!ok) {
                     ctx.getSource().sendFailure(Component.literal(
                             "Not enough essence (have " + e.getCurrentEssence() + ", need " + value + ")"));
@@ -171,7 +168,7 @@ public class CultivationCommand {
                 }
             }
         }
-        long after = CultivationManager.essence(player).getCurrentEssence();
+        long after = EssenceManager.essence(player).getCurrentEssence();
         feedback(ctx, player.getDisplayName().copy()
                 .append(" essence " + op.name().toLowerCase() + " " + value
                         + " → " + after + "/" + e.getMaxEssence()));
@@ -179,8 +176,8 @@ public class CultivationCommand {
     }
 
     private static int info(CommandContext<CommandSourceStack> ctx, ServerPlayer player) {
-        BasicAttachments b = CultivationManager.realm(player);
-        EssenceAttachment e = CultivationManager.essence(player);
+        BasicAttachments b = RealmManager.realm(player);
+        EssenceAttachment e = EssenceManager.essence(player);
         CommandSourceStack src = ctx.getSource();
 
         src.sendSuccess(() -> player.getDisplayName().copy()
@@ -202,28 +199,23 @@ public class CultivationCommand {
     //endregion
 
     //region Helpers
-    /** 取自己 (执行者必须是玩家) */
     private static ServerPlayer self(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
         return ctx.getSource().getPlayerOrException();
     }
 
-    /** 取 target 参数指定的玩家 */
     private static ServerPlayer target(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
         return EntityArgument.getPlayer(ctx, "target");
     }
 
-    /** 统一反馈 (success，broadcast 给 admin) */
     private static void feedback(CommandContext<CommandSourceStack> ctx, Component msg) {
         ctx.getSource().sendSuccess(() -> msg, true);
     }
 
-    /** 函数式接口：执行带 player 参数的命令 */
     @FunctionalInterface
     private interface CommandExecutor {
         int run(CommandContext<CommandSourceStack> ctx, ServerPlayer player) throws CommandSyntaxException;
     }
 
-    /** essence 子命令操作类型 */
     private enum EssenceOp { ADD, SET, CONSUME }
     //endregion
 }

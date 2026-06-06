@@ -7,6 +7,8 @@
   "guzhenren.lang.aptitude.third": "丙等",
   "guzhenren.lang.hud.essence_label": "真元",
   "guzhenren.lang.hud.unawakened": "未开窍·凡人",
+  "guzhenren.lang.message.gu_fed": "蛊虫已喂食",
+  "guzhenren.lang.message.gu_starved": "蛊虫力竭饿死",
   "guzhenren.lang.rank.ordinary": "凡人",
   "guzhenren.lang.rank.rank_1": "一转",
   "guzhenren.lang.rank.rank_2": "二转",
@@ -16,5 +18,9 @@
   "guzhenren.lang.stage.init": "初阶",
   "guzhenren.lang.stage.mid": "中阶",
   "guzhenren.lang.stage.peak": "巅峰",
-  "guzhenren.lang.stage.up": "高阶"
+  "guzhenren.lang.stage.up": "高阶",
+  "item.guzhenren.essence_stone": "元石",
+  "item.guzhenren.hope_gu": "希望蛊",
+  "itemGroup.guzhenren.gu_material": "蛊材",
+  "itemGroup.guzhenren.mortal_gu": "凡蛊"
 }

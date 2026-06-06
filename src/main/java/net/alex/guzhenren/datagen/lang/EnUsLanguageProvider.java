@@ -4,6 +4,7 @@ import net.alex.guzhenren.Guzhenren;
 import net.alex.guzhenren.cultivation.enums.Aptitude;
 import net.alex.guzhenren.cultivation.enums.Rank;
 import net.alex.guzhenren.cultivation.enums.Stage;
+import net.alex.guzhenren.item.ModItems;
 import net.minecraft.data.PackOutput;
 import net.neoforged.neoforge.common.data.LanguageProvider;
 
@@ -28,6 +29,15 @@ public class EnUsLanguageProvider extends LanguageProvider {
         // HUD
         add(Guzhenren.LANG_PREFIX + "hud.unawakened",   "Mortal (not awakened)");
         add(Guzhenren.LANG_PREFIX + "hud.essence_label", "Essence");
+
+        add(Guzhenren.LANG_PREFIX + "message.gu_fed",     "Gu fed");
+        add(Guzhenren.LANG_PREFIX + "message.gu_starved", "Gu starved to death");
+
+        add("itemGroup." + Guzhenren.MOD_ID + ".gu_material", "Gu Material");
+        add("itemGroup." + Guzhenren.MOD_ID + ".mortal_gu",   "Mortal Gu");
+
+        add(ModItems.HOPE_GU.get(), "Hope Gu");
+        add(ModItems.ESSENCE_STONE.get(), "Primeval Essence Stone");
     }
 
     private static String aptitudeName(Aptitude a) {

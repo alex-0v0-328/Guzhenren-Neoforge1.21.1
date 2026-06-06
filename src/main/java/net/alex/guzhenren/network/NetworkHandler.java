@@ -3,6 +3,8 @@ package net.alex.guzhenren.network;
 import net.alex.guzhenren.Guzhenren;
 import net.alex.guzhenren.cultivation.AttachmentTypes;
 import net.alex.guzhenren.network.handler.ClientPayloadHandler;
+import net.alex.guzhenren.network.handler.ServerPayloadHandler;
+import net.alex.guzhenren.network.payload.GuLeftClickPayload;
 import net.alex.guzhenren.network.payload.SyncBasicPayload;
 import net.alex.guzhenren.network.payload.SyncEssencePayload;
 import net.minecraft.server.level.ServerPlayer;
@@ -37,6 +39,11 @@ public final class NetworkHandler {
                 SyncEssencePayload.TYPE,
                 SyncEssencePayload.STREAM_CODEC,
                 ClientPayloadHandler::handleSyncEssence
+        );
+        registrar.playToServer(
+                GuLeftClickPayload.TYPE,
+                GuLeftClickPayload.STREAM_CODEC,
+                ServerPayloadHandler::handleGuLeftClick
         );
     }
 

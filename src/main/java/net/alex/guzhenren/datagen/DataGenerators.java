@@ -19,5 +19,8 @@ public class DataGenerators {
 
         generator.addProvider(event.includeClient(), new EnUsLanguageProvider(packOutput));
         generator.addProvider(event.includeClient(), new ZhCnLanguageProvider(packOutput));
+
+        generator.addProvider(event.includeClient(),
+                new ModItemModelProvider(packOutput, event.getExistingFileHelper()));
     }
 }

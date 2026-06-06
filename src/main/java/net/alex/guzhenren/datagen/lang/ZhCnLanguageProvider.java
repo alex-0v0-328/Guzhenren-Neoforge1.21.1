@@ -4,6 +4,7 @@ import net.alex.guzhenren.Guzhenren;
 import net.alex.guzhenren.cultivation.enums.Aptitude;
 import net.alex.guzhenren.cultivation.enums.Rank;
 import net.alex.guzhenren.cultivation.enums.Stage;
+import net.alex.guzhenren.item.ModItems;
 import net.minecraft.data.PackOutput;
 import net.neoforged.neoforge.common.data.LanguageProvider;
 
@@ -28,6 +29,15 @@ public class ZhCnLanguageProvider extends LanguageProvider {
         // HUD
         add(Guzhenren.LANG_PREFIX + "hud.unawakened",   "未开窍·凡人");
         add(Guzhenren.LANG_PREFIX + "hud.essence_label", "真元");
+
+        add(Guzhenren.LANG_PREFIX + "message.gu_fed",     "蛊虫已喂食");
+        add(Guzhenren.LANG_PREFIX + "message.gu_starved", "蛊虫力竭饿死");
+
+        add("itemGroup." + Guzhenren.MOD_ID + ".gu_material", "蛊材");
+        add("itemGroup." + Guzhenren.MOD_ID + ".mortal_gu",   "凡蛊");
+
+        add(ModItems.HOPE_GU.get(), "希望蛊");
+        add(ModItems.ESSENCE_STONE.get(), "元石");
     }
 
     private static String aptitudeName(Aptitude a) {

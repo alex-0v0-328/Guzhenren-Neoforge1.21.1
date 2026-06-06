@@ -1,12 +1,13 @@
 package net.alex.guzhenren;
 
 import net.alex.guzhenren.cultivation.AttachmentTypes;
+import net.alex.guzhenren.item.ModCreativeTabs;
+import net.alex.guzhenren.item.ModDataComponents;
+import net.alex.guzhenren.item.ModItems;
 import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
 
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.world.level.block.Blocks;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
@@ -32,6 +33,11 @@ public class Guzhenren {
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
 
         AttachmentTypes.register(modEventBus);
+
+        ModItems.register(modEventBus);
+        ModCreativeTabs.register(modEventBus);
+
+        ModDataComponents.register(modEventBus);
     }
 
     private void commonSetup(FMLCommonSetupEvent event) {
