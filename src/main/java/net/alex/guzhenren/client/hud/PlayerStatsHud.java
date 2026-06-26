@@ -9,7 +9,7 @@ import net.minecraft.client.gui.LayeredDraw;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 
-public class PlayerEssenceHud implements LayeredDraw.Layer {
+public class PlayerStatsHud implements LayeredDraw.Layer {
 
     private static final int MARGIN_X = 4;
     private static final int MARGIN_Y = 4;
@@ -25,8 +25,8 @@ public class PlayerEssenceHud implements LayeredDraw.Layer {
         Minecraft mc = Minecraft.getInstance();
         if (mc.player == null) return;
 
-        CultivationData c = ClientPlayerData.getCultivation();
-        EssenceData e = ClientPlayerData.getEssence();
+        CoreComponent c = ClientPlayerData.getCultivation();
+        EssenceComponent e = ClientPlayerData.getEssence();
         boolean awakened = ClientPlayerData.getStatus().isApertureAwakened();
 
         // 第一行: 修为 (Rank + Stage), 始终显示

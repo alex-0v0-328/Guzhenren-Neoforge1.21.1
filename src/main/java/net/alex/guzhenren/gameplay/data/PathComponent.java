@@ -7,18 +7,18 @@ import net.alex.guzhenren.enums.path.*;
 import java.util.EnumMap;
 import java.util.Map;
 
-public class PathData {
+public class PathComponent {
 
-    public static final Codec<PathData> CODEC = RecordCodecBuilder.create(i -> i.group(
+    public static final Codec<PathComponent> CODEC = RecordCodecBuilder.create(i -> i.group(
             Codec.unboundedMap(Path.CODEC, Attainment.CODEC).fieldOf("attainments").forGetter(d -> d.attainments),
             Codec.unboundedMap(Path.CODEC, Codec.LONG).fieldOf("marks").forGetter(d -> d.marks)
-    ).apply(i, PathData::fromCodec));
+    ).apply(i, PathComponent::fromCodec));
 
     private final Map<Path, Attainment> attainments;
     private final Map<Path, Long> marks;
     private transient boolean dirty = false;
 
-    public PathData() {
+    public PathComponent() {
         this.attainments = new EnumMap<>(Path.class);
         this.marks = new EnumMap<>(Path.class);
         for (Path p : Path.values()) {
@@ -27,8 +27,8 @@ public class PathData {
         }
     }
 
-    private static PathData fromCodec(Map<Path, Attainment> a, Map<Path, Long> m) {
-        PathData d = new PathData();
+    private static PathComponent fromCodec(Map<Path, Attainment> a, Map<Path, Long> m) {
+        PathComponent d = new PathComponent();
         d.attainments.putAll(a);
         d.marks.putAll(m);
         return d;

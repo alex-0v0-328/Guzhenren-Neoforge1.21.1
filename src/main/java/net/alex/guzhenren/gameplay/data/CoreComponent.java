@@ -2,17 +2,17 @@ package net.alex.guzhenren.gameplay.data;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.alex.guzhenren.enums.cultivation.*;
+import net.alex.guzhenren.enums.core.*;
 
-public class CultivationData {
+public class CoreComponent {
 
-    public static final Codec<CultivationData> CODEC = RecordCodecBuilder.create(i -> i.group(
-            Rank.CODEC.fieldOf("rank").forGetter(CultivationData::getPlayerRank),
-            Stage.CODEC.fieldOf("stage").forGetter(CultivationData::getPlayerStage),
-            Talent.CODEC.fieldOf("talent").forGetter(CultivationData::getPlayerTalent),
-            TenExtreme.CODEC.fieldOf("extreme_physique").forGetter(CultivationData::getPlayerExtremePhysique),
-            Codec.INT.fieldOf("base_essence").forGetter(CultivationData::getPlayerBaseEssence)
-    ).apply(i, CultivationData::new));
+    public static final Codec<CoreComponent> CODEC = RecordCodecBuilder.create(i -> i.group(
+            Rank.CODEC.fieldOf("rank").forGetter(CoreComponent::getPlayerRank),
+            Stage.CODEC.fieldOf("stage").forGetter(CoreComponent::getPlayerStage),
+            Talent.CODEC.fieldOf("talent").forGetter(CoreComponent::getPlayerTalent),
+            TenExtreme.CODEC.fieldOf("extreme_physique").forGetter(CoreComponent::getPlayerExtremePhysique),
+            Codec.INT.fieldOf("base_essence").forGetter(CoreComponent::getPlayerBaseEssence)
+    ).apply(i, CoreComponent::new));
 
     private Rank playerRank;
     private Stage playerStage;
@@ -21,7 +21,7 @@ public class CultivationData {
     private int playerBaseEssence;
     private transient boolean dirty = false;
 
-    public CultivationData() {
+    public CoreComponent() {
         this.playerRank = Rank.MORTAL;
         this.playerStage = Stage.NONE;
         this.playerTalent = Talent.NONE;
@@ -30,7 +30,7 @@ public class CultivationData {
         this.dirty = false;
     }
 
-    public CultivationData(Rank rank, Stage stage, Talent talent, TenExtreme physique, int baseEssence) {
+    public CoreComponent(Rank rank, Stage stage, Talent talent, TenExtreme physique, int baseEssence) {
         this.playerRank = rank;
         this.playerStage = stage;
         this.playerTalent = talent;

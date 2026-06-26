@@ -1,6 +1,6 @@
 package net.alex.guzhenren;
 
-import net.alex.guzhenren.registry.ModAttachments;
+import net.alex.guzhenren.registry.ModAttachment;
 import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
@@ -25,7 +25,7 @@ public class Guzhenren {
         // Register the commonSetup method for modloading
         modEventBus.addListener(this::commonSetup);
 
-        ModAttachments.register(modEventBus);
+        ModAttachment.register(modEventBus);
 
         // Register ourselves for server and other game events we are interested in.
         // Note that this is necessary if and only if we want *this* class (Guzhenren) to respond directly to events.

@@ -2,22 +2,22 @@ package net.alex.guzhenren.gameplay.data;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.alex.guzhenren.enums.cultivation.*;
+import net.alex.guzhenren.enums.core.*;
 
-public class EssenceData {
+public class EssenceComponent {
 
-    public static final Codec<EssenceData> CODEC = RecordCodecBuilder.create(i -> i.group(
-            Codec.LONG.fieldOf("max_essence").forGetter(EssenceData::getMaxEssence),
-            Codec.FLOAT.fieldOf("current_essence").forGetter(EssenceData::getCurrentEssence)
-    ).apply(i, EssenceData::new));
+    public static final Codec<EssenceComponent> CODEC = RecordCodecBuilder.create(i -> i.group(
+            Codec.LONG.fieldOf("max_essence").forGetter(EssenceComponent::getMaxEssence),
+            Codec.FLOAT.fieldOf("current_essence").forGetter(EssenceComponent::getCurrentEssence)
+    ).apply(i, EssenceComponent::new));
 
     private static final int TICKS_PER_DAY = 24000;
     private long maxEssence;
     private float currentEssence;
 
-    public EssenceData() { this(0L, 0f); }
+    public EssenceComponent() { this(0L, 0f); }
 
-    public EssenceData(long maxEssence, float currentEssence) {
+    public EssenceComponent(long maxEssence, float currentEssence) {
         this.maxEssence = maxEssence;
         this.currentEssence = currentEssence;
     }

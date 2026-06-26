@@ -5,11 +5,11 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public class ClientPayloadHandlers {
 
-    public static void handleFullSync(PlayerDataSyncPayload payload, IPayloadContext ctx) {
+    public static void handleFullSync(ModPlayerSyncPayload payload, IPayloadContext ctx) {
         ctx.enqueueWork(() -> ClientPlayerData.setAll(payload.data()));
     }
 
-    public static void handleCultivation(CultivationSyncPayload payload, IPayloadContext ctx) {
+    public static void handleCultivation(CoreSyncPayload payload, IPayloadContext ctx) {
         ctx.enqueueWork(() -> ClientPlayerData.setCultivation(payload.data()));
     }
 

@@ -1,9 +1,9 @@
 package net.alex.guzhenren.event;
 
 import net.alex.guzhenren.Guzhenren;
-import net.alex.guzhenren.gameplay.data.PlayerData;
+import net.alex.guzhenren.gameplay.data.ModPlayerData;
 import net.alex.guzhenren.network.sync.*;
-import net.alex.guzhenren.registry.ModAttachments;
+import net.alex.guzhenren.registry.ModAttachment;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.GameRules;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -13,19 +13,19 @@ import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 @EventBusSubscriber(modid = Guzhenren.MOD_ID)
-public class PlayerEvents {
+public class ModPlayerEvents {
 
     private static final int ESSENCE_SYNC_INTERVAL = 20;
 
     @SubscribeEvent
     public static void onPlayerTick(PlayerTickEvent.Post event) {
         if (!(event.getEntity() instanceof ServerPlayer sp)) return;
-        PlayerData data = sp.getData(ModAttachments.PLAYER_DATA.get());
+        ModPlayerData data = sp.getData(ModAttachment.PLAYER_DATA.get());
 
         data.essence().naturalRecoveryPerTick();
 
         if (data.cultivation().isDirty()) {
-            PacketDistributor.sendToPlayer(sp, new CultivationSyncPayload(data.cultivation()));
+            PacketDistributor.sendToPlayer(sp, new CoreSyncPayload(data.cultivation()));
             data.cultivation().clearDirty();
         }
         if (data.status().isDirty()) {
@@ -45,15 +45,15 @@ public class PlayerEvents {
     @SubscribeEvent
     public static void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
         if (!(event.getEntity() instanceof ServerPlayer sp)) return;
-        PlayerData data = sp.getData(ModAttachments.PLAYER_DATA.get());
-        PacketDistributor.sendToPlayer(sp, new PlayerDataSyncPayload(data));
+        ModPlayerData data = sp.getData(ModAttachment.PLAYER_DATA.get());
+        PacketDistributor.sendToPlayer(sp, new ModPlayerSyncPayload(data));
     }
 
     @SubscribeEvent
     public static void onPlayerRespawn(PlayerEvent.PlayerRespawnEvent event) {
         if (!(event.getEntity() instanceof ServerPlayer sp)) return;
-        PlayerData data = sp.getData(ModAttachments.PLAYER_DATA.get());
-        PacketDistributor.sendToPlayer(sp, new PlayerDataSyncPayload(data));
+        ModPlayerData data = sp.getData(ModAttachment.PLAYER_DATA.get());
+        PacketDistributor.sendToPlayer(sp, new ModPlayerSyncPayload(data));
     }
 
     @SubscribeEvent
@@ -66,8 +66,8 @@ public class PlayerEvents {
             if (!keep) return;
         }
 
-        PlayerData oldData = oldPlayer.getData(ModAttachments.PLAYER_DATA.get());
-        PlayerData newData = newPlayer.getData(ModAttachments.PLAYER_DATA.get());
+        ModPlayerData oldData = oldPlayer.getData(ModAttachment.PLAYER_DATA.get());
+        ModPlayerData newData = newPlayer.getData(ModAttachment.PLAYER_DATA.get());
         newData.copyFrom(oldData);
     }
 }

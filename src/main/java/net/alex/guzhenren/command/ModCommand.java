@@ -5,11 +5,11 @@ import com.mojang.brigadier.arguments.FloatArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.LongArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import net.alex.guzhenren.enums.cultivation.*;
+import net.alex.guzhenren.enums.core.*;
 import net.alex.guzhenren.enums.path.*;
 import net.alex.guzhenren.gameplay.action.*;
-import net.alex.guzhenren.gameplay.data.PlayerData;
-import net.alex.guzhenren.registry.ModAttachments;
+import net.alex.guzhenren.gameplay.data.ModPlayerData;
+import net.alex.guzhenren.registry.ModAttachment;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
@@ -50,8 +50,8 @@ public class ModCommand {
     private static int cmdAwaken(CommandSourceStack src, Talent talent, int percent) {
         ServerPlayer player = src.getPlayer();
         if (player == null) return 0;
-        PlayerData data = player.getData(ModAttachments.PLAYER_DATA.get());
-        if (!PlayerBasicActions.canAwaken(data)) {
+        ModPlayerData data = player.getData(ModAttachment.PLAYER_DATA.get());
+        if (!PlayerCoreActions.canAwaken(data)) {
             src.sendFailure(Component.translatable("guzhenren.command.error.cannot_awaken"));
             return 0;
         }
@@ -65,11 +65,11 @@ public class ModCommand {
                         talent.getMinEssence(), talent.getMaxEssence()));
                 return 0;
             }
-            PlayerBasicActions.awaken(player, talent, percent);
+            PlayerCoreActions.awaken(player, talent, percent);
         } else if (talent != null) {
-            PlayerBasicActions.awaken(player, talent);
+            PlayerCoreActions.awaken(player, talent);
         } else {
-            PlayerBasicActions.awaken(player);
+            PlayerCoreActions.awaken(player);
         }
         src.sendSuccess(() -> Component.translatable("guzhenren.command.success.awakened"), false);
         return 1;
@@ -84,7 +84,7 @@ public class ModCommand {
     private static int cmdInfo(CommandSourceStack src) {
         ServerPlayer player = src.getPlayer();
         if (player == null) return 0;
-        PlayerData data = player.getData(ModAttachments.PLAYER_DATA.get());
+        ModPlayerData data = player.getData(ModAttachment.PLAYER_DATA.get());
 
         src.sendSuccess(() -> Component.translatable("guzhenren.command.info.cultivation",
                 Component.translatable(data.cultivation().getPlayerRank().getTranslationKey()),
@@ -139,7 +139,7 @@ public class ModCommand {
             src.sendFailure(Component.translatable("guzhenren.command.error.invalid_rank_mortal"));
             return 0;
         }
-        PlayerBasicActions.setRank(player, rank);
+        PlayerCoreActions.setRank(player, rank);
         src.sendSuccess(() -> Component.translatable("guzhenren.command.success.rank_set",
                 Component.translatable(rank.getTranslationKey())), false);
         return 1;
@@ -148,11 +148,11 @@ public class ModCommand {
     private static int cmdRankUp(CommandSourceStack src) {
         ServerPlayer player = src.getPlayer();
         if (player == null || !requireAwakened(src, player)) return 0;
-        if (!PlayerBasicActions.rankUp(player)) {
+        if (!PlayerCoreActions.rankUp(player)) {
             src.sendFailure(Component.translatable("guzhenren.command.error.rank_up_failed"));
             return 0;
         }
-        Rank now = player.getData(ModAttachments.PLAYER_DATA.get()).cultivation().getPlayerRank();
+        Rank now = player.getData(ModAttachment.PLAYER_DATA.get()).cultivation().getPlayerRank();
         src.sendSuccess(() -> Component.translatable("guzhenren.command.success.rank_up",
                 Component.translatable(now.getTranslationKey())), false);
         return 1;
@@ -161,11 +161,11 @@ public class ModCommand {
     private static int cmdRankDown(CommandSourceStack src) {
         ServerPlayer player = src.getPlayer();
         if (player == null || !requireAwakened(src, player)) return 0;
-        if (!PlayerBasicActions.rankDown(player)) {
+        if (!PlayerCoreActions.rankDown(player)) {
             src.sendFailure(Component.translatable("guzhenren.command.error.rank_down_failed"));
             return 0;
         }
-        Rank now = player.getData(ModAttachments.PLAYER_DATA.get()).cultivation().getPlayerRank();
+        Rank now = player.getData(ModAttachment.PLAYER_DATA.get()).cultivation().getPlayerRank();
         src.sendSuccess(() -> Component.translatable("guzhenren.command.success.rank_down",
                 Component.translatable(now.getTranslationKey())), false);
         return 1;
@@ -189,7 +189,7 @@ public class ModCommand {
             src.sendFailure(Component.translatable("guzhenren.command.error.invalid_stage_none"));
             return 0;
         }
-        PlayerBasicActions.setStage(player, stage);
+        PlayerCoreActions.setStage(player, stage);
         src.sendSuccess(() -> Component.translatable("guzhenren.command.success.stage_set",
                 Component.translatable(stage.getTranslationKey())), false);
         return 1;
@@ -198,11 +198,11 @@ public class ModCommand {
     private static int cmdStageUp(CommandSourceStack src) {
         ServerPlayer player = src.getPlayer();
         if (player == null || !requireAwakened(src, player)) return 0;
-        if (!PlayerBasicActions.stageUp(player)) {
+        if (!PlayerCoreActions.stageUp(player)) {
             src.sendFailure(Component.translatable("guzhenren.command.error.stage_up_failed"));
             return 0;
         }
-        Stage now = player.getData(ModAttachments.PLAYER_DATA.get()).cultivation().getPlayerStage();
+        Stage now = player.getData(ModAttachment.PLAYER_DATA.get()).cultivation().getPlayerStage();
         src.sendSuccess(() -> Component.translatable("guzhenren.command.success.stage_up",
                 Component.translatable(now.getTranslationKey())), false);
         return 1;
@@ -211,11 +211,11 @@ public class ModCommand {
     private static int cmdStageDown(CommandSourceStack src) {
         ServerPlayer player = src.getPlayer();
         if (player == null || !requireAwakened(src, player)) return 0;
-        if (!PlayerBasicActions.stageDown(player)) {
+        if (!PlayerCoreActions.stageDown(player)) {
             src.sendFailure(Component.translatable("guzhenren.command.error.stage_down_failed"));
             return 0;
         }
-        Stage now = player.getData(ModAttachments.PLAYER_DATA.get()).cultivation().getPlayerStage();
+        Stage now = player.getData(ModAttachment.PLAYER_DATA.get()).cultivation().getPlayerStage();
         src.sendSuccess(() -> Component.translatable("guzhenren.command.success.stage_down",
                 Component.translatable(now.getTranslationKey())), false);
         return 1;
@@ -237,7 +237,7 @@ public class ModCommand {
             src.sendFailure(Component.translatable("guzhenren.command.error.invalid_talent_none"));
             return 0;
         }
-        PlayerBasicActions.setTalent(player, talent);
+        PlayerCoreActions.setTalent(player, talent);
         src.sendSuccess(() -> Component.translatable("guzhenren.command.success.talent_set",
                 Component.translatable(talent.getTranslationKey())), false);
         return 1;
@@ -256,7 +256,7 @@ public class ModCommand {
     private static int cmdAddBase(CommandSourceStack src, int amount) {
         ServerPlayer player = src.getPlayer();
         if (player == null || !requireAwakened(src, player)) return 0;
-        PlayerBasicActions.addBaseEssence(player, amount);
+        PlayerCoreActions.addBaseEssence(player, amount);
         src.sendSuccess(() -> Component.translatable("guzhenren.command.success.base_added", amount), false);
         return 1;
     }
@@ -264,7 +264,7 @@ public class ModCommand {
     private static int cmdSubBase(CommandSourceStack src, int amount) {
         ServerPlayer player = src.getPlayer();
         if (player == null || !requireAwakened(src, player)) return 0;
-        PlayerBasicActions.subBaseEssence(player, amount);
+        PlayerCoreActions.subBaseEssence(player, amount);
         src.sendSuccess(() -> Component.translatable("guzhenren.command.success.base_subbed", amount), false);
         return 1;
     }
@@ -321,7 +321,7 @@ public class ModCommand {
             src.sendFailure(Component.translatable("guzhenren.command.error.invalid_physique_none"));
             return 0;
         }
-        PlayerBasicActions.setPhysique(player, physique);
+        PlayerCoreActions.setPhysique(player, physique);
         src.sendSuccess(() -> Component.translatable("guzhenren.command.success.physique_set",
                 Component.translatable(physique.getTranslationKey())), false);
         return 1;
@@ -394,7 +394,7 @@ public class ModCommand {
             src.sendFailure(Component.translatable("guzhenren.command.error.path_attainment_up_failed"));
             return 0;
         }
-        Attainment now = player.getData(ModAttachments.PLAYER_DATA.get()).path().getAttainment(path);
+        Attainment now = player.getData(ModAttachment.PLAYER_DATA.get()).path().getAttainment(path);
         src.sendSuccess(() -> Component.translatable("guzhenren.command.success.path_attainment_up",
                 Component.translatable(path.getTranslationKey()),
                 Component.translatable(now.getTranslationKey())), false);
@@ -408,7 +408,7 @@ public class ModCommand {
             src.sendFailure(Component.translatable("guzhenren.command.error.path_attainment_down_failed"));
             return 0;
         }
-        Attainment now = player.getData(ModAttachments.PLAYER_DATA.get()).path().getAttainment(path);
+        Attainment now = player.getData(ModAttachment.PLAYER_DATA.get()).path().getAttainment(path);
         src.sendSuccess(() -> Component.translatable("guzhenren.command.success.path_attainment_down",
                 Component.translatable(path.getTranslationKey()),
                 Component.translatable(now.getTranslationKey())), false);
@@ -424,7 +424,7 @@ public class ModCommand {
     private static int cmdReset(CommandSourceStack src) {
         ServerPlayer player = src.getPlayer();
         if (player == null) return 0;
-        PlayerBasicActions.reset(player);
+        PlayerCoreActions.reset(player);
         src.sendSuccess(() -> Component.translatable("guzhenren.command.success.reset"), false);
         return 1;
     }
@@ -432,8 +432,8 @@ public class ModCommand {
 
     //region HELPERS
     private static boolean requireAwakened(CommandSourceStack src, ServerPlayer player) {
-        PlayerData data = player.getData(ModAttachments.PLAYER_DATA.get());
-        if (!PlayerBasicActions.isAwakened(data)) {
+        ModPlayerData data = player.getData(ModAttachment.PLAYER_DATA.get());
+        if (!PlayerCoreActions.isAwakened(data)) {
             src.sendFailure(Component.translatable("guzhenren.command.error.not_awakened"));
             return false;
         }

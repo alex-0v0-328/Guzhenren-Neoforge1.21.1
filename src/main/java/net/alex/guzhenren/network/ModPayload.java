@@ -9,7 +9,7 @@ import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 
 @EventBusSubscriber(modid = Guzhenren.MOD_ID)
-public class ModPayloads {
+public class ModPayload {
 
     private static final String PROTOCOL_VERSION = "1";
 
@@ -17,9 +17,9 @@ public class ModPayloads {
     public static void onRegisterPayloadHandlers(RegisterPayloadHandlersEvent event) {
         PayloadRegistrar reg = event.registrar(PROTOCOL_VERSION);
 
-        reg.playToClient(PlayerDataSyncPayload.TYPE,  PlayerDataSyncPayload.STREAM_CODEC,
+        reg.playToClient(ModPlayerSyncPayload.TYPE,  ModPlayerSyncPayload.STREAM_CODEC,
                 ClientPayloadHandlers::handleFullSync);
-        reg.playToClient(CultivationSyncPayload.TYPE, CultivationSyncPayload.STREAM_CODEC,
+        reg.playToClient(CoreSyncPayload.TYPE, CoreSyncPayload.STREAM_CODEC,
                 ClientPayloadHandlers::handleCultivation);
         reg.playToClient(EssenceSyncPayload.TYPE,     EssenceSyncPayload.STREAM_CODEC,
                 ClientPayloadHandlers::handleEssence);

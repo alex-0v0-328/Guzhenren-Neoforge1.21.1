@@ -1,4 +1,4 @@
-package net.alex.guzhenren.enums.cultivation;
+package net.alex.guzhenren.enums.core;
 
 import com.mojang.serialization.Codec;
 import net.minecraft.util.StringRepresentable;

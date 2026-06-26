@@ -4,21 +4,21 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.alex.guzhenren.enums.path.Path;
 
-public record PlayerData(CultivationData cultivation, EssenceData essence,
-                         StatusData status, PathData path) {
+public record ModPlayerData(CoreComponent cultivation, EssenceComponent essence,
+                            StatusComponent status, PathComponent path) {
 
-    public static final Codec<PlayerData> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-            CultivationData.CODEC.fieldOf("cultivation").forGetter(PlayerData::cultivation),
-            EssenceData.CODEC.fieldOf("essence").forGetter(PlayerData::essence),
-            StatusData.CODEC.fieldOf("status").forGetter(PlayerData::status),
-            PathData.CODEC.fieldOf("path").forGetter(PlayerData::path)
-    ).apply(instance, PlayerData::new));
+    public static final Codec<ModPlayerData> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+            CoreComponent.CODEC.fieldOf("cultivation").forGetter(ModPlayerData::cultivation),
+            EssenceComponent.CODEC.fieldOf("essence").forGetter(ModPlayerData::essence),
+            StatusComponent.CODEC.fieldOf("status").forGetter(ModPlayerData::status),
+            PathComponent.CODEC.fieldOf("path").forGetter(ModPlayerData::path)
+    ).apply(instance, ModPlayerData::new));
 
-    public PlayerData() {
-        this(new CultivationData(), new EssenceData(), new StatusData(), new PathData());
+    public ModPlayerData() {
+        this(new CoreComponent(), new EssenceComponent(), new StatusComponent(), new PathComponent());
     }
 
-    public void copyFrom(PlayerData src) {
+    public void copyFrom(ModPlayerData src) {
         this.cultivation.setPlayerRank(src.cultivation.getPlayerRank());
         this.cultivation.setPlayerStage(src.cultivation.getPlayerStage());
         this.cultivation.setPlayerTalent(src.cultivation.getPlayerTalent());

@@ -1,7 +1,7 @@
 package net.alex.guzhenren.datagen;
 
 import net.alex.guzhenren.Guzhenren;
-import net.alex.guzhenren.enums.cultivation.*;
+import net.alex.guzhenren.enums.core.*;
 import net.alex.guzhenren.enums.path.*;
 import net.minecraft.data.PackOutput;
 import net.neoforged.neoforge.common.data.LanguageProvider;
