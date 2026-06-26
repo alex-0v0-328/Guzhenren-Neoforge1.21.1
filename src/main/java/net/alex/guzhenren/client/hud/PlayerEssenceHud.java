@@ -7,6 +7,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.LayeredDraw;
 import net.minecraft.network.chat.Component;
+import org.jetbrains.annotations.NotNull;
 
 public class PlayerEssenceHud implements LayeredDraw.Layer {
 
@@ -20,7 +21,7 @@ public class PlayerEssenceHud implements LayeredDraw.Layer {
     private static final int TEXT_COLOR       = 0xFFFFFFFF;
 
     @Override
-    public void render(GuiGraphics gui, DeltaTracker delta) {
+    public void render(@NotNull GuiGraphics gui, @NotNull DeltaTracker delta) {
         Minecraft mc = Minecraft.getInstance();
         if (mc.player == null) return;
 
