@@ -1,10 +1,12 @@
 package net.alex.guzhenren.client;
 
+import java.util.List;
 import net.alex.guzhenren.gameplay.data.CoreComponent;
 import net.alex.guzhenren.gameplay.data.EssenceComponent;
 import net.alex.guzhenren.gameplay.data.ModPlayerData;
 import net.alex.guzhenren.gameplay.data.PathComponent;
 import net.alex.guzhenren.gameplay.data.StatusComponent;
+import net.alex.guzhenren.network.sync.PathDelta;
 
 public class ClientPlayerData {
 
@@ -32,5 +34,17 @@ public class ClientPlayerData {
         essence = data.essence();
         status = data.status();
         path = data.path();
+    }
+
+    /**
+     * 增量更新 path component
+     * 直接 mutate 当前 path 对象, 不替换实例
+     */
+    public static void applyPathDeltas(List<PathDelta> deltas) {
+        for (PathDelta delta : deltas) {
+            path.setAttainment(delta.path(), delta.attainment());
+            path.setMarks(delta.path(), delta.marks());
+        }
+        path.clearDirty();
     }
 }

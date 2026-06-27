@@ -154,6 +154,7 @@ public class PlayerCoreActions {
             data.path().setAttainment(p, Attainment.ORDINARY);
             data.path().setMarks(p, 0L);
         }
+        data.path().markFullSync();
     }
 //endregion
 

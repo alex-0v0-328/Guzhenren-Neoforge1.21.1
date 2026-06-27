@@ -15,6 +15,7 @@ public class EssenceComponent {
 
     private long maxEssence;
     private float currentEssence;
+    private transient boolean actionDirty = false;
 
     public EssenceComponent() {
         this(0L, 0f);
@@ -26,24 +27,21 @@ public class EssenceComponent {
     }
 
     //region GETTER
-    public long getMaxEssence() {
-        return maxEssence;
-    }
-
-    public float getCurrentEssence() {
-        return currentEssence;
-    }
+    public long getMaxEssence() { return maxEssence; }
+    public float getCurrentEssence() { return currentEssence; }
 //endregion
 
     //region CURRENT ESSENCE
     public void addCurrent(float amount) {
         if (amount <= 0f) return;
         currentEssence = Math.min(maxEssence, currentEssence + amount);
+        actionDirty = true;
     }
 
     public void subCurrent(float amount) {
         if (amount <= 0f) return;
         currentEssence = Math.max(0f, currentEssence - amount);
+        actionDirty = true;
     }
 //endregion
 
@@ -51,16 +49,24 @@ public class EssenceComponent {
     public void recomputeMaxEssence(int baseEssence, Rank rank, Stage stage) {
         this.maxEssence = (long) baseEssence * rank.getEssenceBase() * stage.getEssenceMultiplier() / 100L;
         if (currentEssence > maxEssence) currentEssence = maxEssence;
+        actionDirty = true;
     }
 
     public void naturalRecoveryPerTick() {
         if (maxEssence <= 0L) return;
         float perTick = (float) maxEssence / TICKS_PER_DAY;
         currentEssence = Math.min(maxEssence, currentEssence + perTick);
+        // 不标 actionDirty: natural recovery 走周期 sync
     }
 
     public void refillCurrentEssence() {
         this.currentEssence = this.maxEssence;
+        actionDirty = true;
     }
+//endregion
+
+    //region DIRTY
+    public boolean isActionDirty() { return actionDirty; }
+    public void clearActionDirty() { this.actionDirty = false; }
 //endregion
 }

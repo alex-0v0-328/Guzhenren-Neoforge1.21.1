@@ -3,6 +3,7 @@ package net.alex.guzhenren.client;
 import net.alex.guzhenren.network.sync.CoreSyncPayload;
 import net.alex.guzhenren.network.sync.EssenceSyncPayload;
 import net.alex.guzhenren.network.sync.ModPlayerSyncPayload;
+import net.alex.guzhenren.network.sync.PathDeltaSyncPayload;
 import net.alex.guzhenren.network.sync.PathSyncPayload;
 import net.alex.guzhenren.network.sync.StatusSyncPayload;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
@@ -27,5 +28,9 @@ public class ClientPayloadHandlers {
 
     public static void handlePath(PathSyncPayload payload, IPayloadContext ctx) {
         ctx.enqueueWork(() -> ClientPlayerData.setPath(payload.data()));
+    }
+
+    public static void handlePathDelta(PathDeltaSyncPayload payload, IPayloadContext ctx) {
+        ctx.enqueueWork(() -> ClientPlayerData.applyPathDeltas(payload.deltas()));
     }
 }

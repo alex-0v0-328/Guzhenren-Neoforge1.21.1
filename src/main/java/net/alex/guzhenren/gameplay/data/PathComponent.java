@@ -3,6 +3,7 @@ package net.alex.guzhenren.gameplay.data;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.EnumMap;
+import java.util.EnumSet;
 import java.util.Map;
 import net.alex.guzhenren.enums.path.Attainment;
 import net.alex.guzhenren.enums.path.Path;
@@ -16,7 +17,8 @@ public class PathComponent {
 
     private final Map<Path, Attainment> attainments;
     private final Map<Path, Long> marks;
-    private transient boolean dirty = false;
+    private final transient EnumSet<Path> dirtyPaths = EnumSet.noneOf(Path.class);
+    private transient boolean forceFullSync = false;
 
     public PathComponent() {
         this.attainments = new EnumMap<>(Path.class);
@@ -35,24 +37,19 @@ public class PathComponent {
     }
 
     //region GETTER
-    public Attainment getAttainment(Path path) {
-        return attainments.get(path);
-    }
-
-    public long getMarks(Path path) {
-        return marks.get(path);
-    }
+    public Attainment getAttainment(Path path) { return attainments.get(path); }
+    public long getMarks(Path path) { return marks.get(path); }
 //endregion
 
     //region SETTER
     public void setAttainment(Path path, Attainment attainment) {
         attainments.put(path, attainment);
-        this.dirty = true;
+        dirtyPaths.add(path);
     }
 
     public void setMarks(Path path, long value) {
         marks.put(path, Math.max(0L, value));
-        this.dirty = true;
+        dirtyPaths.add(path);
     }
 //endregion
 
@@ -60,23 +57,23 @@ public class PathComponent {
     public void addMarks(Path path, long amount) {
         if (amount <= 0L) return;
         marks.computeIfPresent(path, (k, cur) -> cur + amount);
-        this.dirty = true;
+        dirtyPaths.add(path);
     }
 
     public void subMarks(Path path, long amount) {
         if (amount <= 0L) return;
         marks.computeIfPresent(path, (k, cur) -> Math.max(0L, cur - amount));
-        this.dirty = true;
+        dirtyPaths.add(path);
     }
 //endregion
 
     //region DIRTY
-    public boolean isDirty() {
-        return dirty;
-    }
-
+    public EnumSet<Path> getDirtyPaths() { return dirtyPaths; }
+    public boolean isForceFullSync() { return forceFullSync; }
+    public void markFullSync() { this.forceFullSync = true; }
     public void clearDirty() {
-        this.dirty = false;
+        dirtyPaths.clear();
+        forceFullSync = false;
     }
 //endregion
 }

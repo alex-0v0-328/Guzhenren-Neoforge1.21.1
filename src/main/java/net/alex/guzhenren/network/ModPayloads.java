@@ -5,6 +5,7 @@ import net.alex.guzhenren.client.ClientPayloadHandlers;
 import net.alex.guzhenren.network.sync.CoreSyncPayload;
 import net.alex.guzhenren.network.sync.EssenceSyncPayload;
 import net.alex.guzhenren.network.sync.ModPlayerSyncPayload;
+import net.alex.guzhenren.network.sync.PathDeltaSyncPayload;
 import net.alex.guzhenren.network.sync.PathSyncPayload;
 import net.alex.guzhenren.network.sync.StatusSyncPayload;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -31,5 +32,7 @@ public class ModPayloads {
                 ClientPayloadHandlers::handleStatus);
         reg.playToClient(PathSyncPayload.TYPE, PathSyncPayload.STREAM_CODEC,
                 ClientPayloadHandlers::handlePath);
+        reg.playToClient(PathDeltaSyncPayload.TYPE, PathDeltaSyncPayload.STREAM_CODEC,
+                ClientPayloadHandlers::handlePathDelta);
     }
 }
