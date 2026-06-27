@@ -4,11 +4,11 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.alex.guzhenren.enums.path.Path;
 
-public record ModPlayerData(CoreComponent cultivation, EssenceComponent essence,
+public record ModPlayerData(CoreComponent core, EssenceComponent essence,
                             StatusComponent status, PathComponent path) {
 
     public static final Codec<ModPlayerData> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-            CoreComponent.CODEC.fieldOf("cultivation").forGetter(ModPlayerData::cultivation),
+            CoreComponent.CODEC.fieldOf("core").forGetter(ModPlayerData::core),
             EssenceComponent.CODEC.fieldOf("essence").forGetter(ModPlayerData::essence),
             StatusComponent.CODEC.fieldOf("status").forGetter(ModPlayerData::status),
             PathComponent.CODEC.fieldOf("path").forGetter(ModPlayerData::path)
@@ -19,16 +19,16 @@ public record ModPlayerData(CoreComponent cultivation, EssenceComponent essence,
     }
 
     public void copyFrom(ModPlayerData src) {
-        this.cultivation.setPlayerRank(src.cultivation.getPlayerRank());
-        this.cultivation.setPlayerStage(src.cultivation.getPlayerStage());
-        this.cultivation.setPlayerTalent(src.cultivation.getPlayerTalent());
-        this.cultivation.setPlayerExtremePhysique(src.cultivation.getPlayerExtremePhysique());
-        this.cultivation.setPlayerBaseEssence(src.cultivation.getPlayerBaseEssence());
+        this.core.setPlayerRank(src.core.getPlayerRank());
+        this.core.setPlayerStage(src.core.getPlayerStage());
+        this.core.setPlayerTalent(src.core.getPlayerTalent());
+        this.core.setPlayerExtremePhysique(src.core.getPlayerExtremePhysique());
+        this.core.setPlayerBaseEssence(src.core.getPlayerBaseEssence());
 
         this.essence.recomputeMaxEssence(
-                src.cultivation.getPlayerBaseEssence(),
-                src.cultivation.getPlayerRank(),
-                src.cultivation.getPlayerStage()
+                src.core.getPlayerBaseEssence(),
+                src.core.getPlayerRank(),
+                src.core.getPlayerStage()
         );
         this.essence.addCurrent(src.essence.getCurrentEssence());
 
@@ -39,7 +39,7 @@ public record ModPlayerData(CoreComponent cultivation, EssenceComponent essence,
             this.path.setMarks(p, src.path.getMarks(p));
         }
 
-        this.cultivation.clearDirty();
+        this.core.clearDirty();
         this.status.clearDirty();
         this.path.clearDirty();
     }

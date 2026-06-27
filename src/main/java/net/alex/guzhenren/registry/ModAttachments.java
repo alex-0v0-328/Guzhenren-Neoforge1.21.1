@@ -1,5 +1,6 @@
 package net.alex.guzhenren.registry;
 
+import java.util.function.Supplier;
 import net.alex.guzhenren.Guzhenren;
 import net.alex.guzhenren.gameplay.data.ModPlayerData;
 import net.neoforged.bus.api.IEventBus;
@@ -7,9 +8,7 @@ import net.neoforged.neoforge.attachment.AttachmentType;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
 
-import java.util.function.Supplier;
-
-public class ModAttachment {
+public class ModAttachments {
 
     public static final DeferredRegister<AttachmentType<?>> ATTACHMENT_TYPES =
             DeferredRegister.create(NeoForgeRegistries.ATTACHMENT_TYPES, Guzhenren.MOD_ID);
@@ -21,5 +20,7 @@ public class ModAttachment {
                             .build()
             );
 
-    public static void register(IEventBus modEventBus) { ATTACHMENT_TYPES.register(modEventBus); }
+    public static void register(IEventBus modEventBus) {
+        ATTACHMENT_TYPES.register(modEventBus);
+    }
 }

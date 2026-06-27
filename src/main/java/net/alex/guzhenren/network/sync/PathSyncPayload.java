@@ -20,5 +20,8 @@ public record PathSyncPayload(PathComponent data) implements CustomPacketPayload
                     PathSyncPayload::new
             );
 
-    @Override public @NotNull Type<? extends CustomPacketPayload> type() { return TYPE; }
+    @Override
+    public @NotNull Type<? extends CustomPacketPayload> type() {
+        return TYPE;
+    }
 }

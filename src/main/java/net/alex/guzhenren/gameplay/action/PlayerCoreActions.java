@@ -1,37 +1,39 @@
 package net.alex.guzhenren.gameplay.action;
 
-import net.alex.guzhenren.enums.core.*;
-import net.alex.guzhenren.enums.path.*;
-import net.alex.guzhenren.gameplay.data.ModPlayerData;
-import net.alex.guzhenren.gameplay.data.CoreComponent;
-import net.alex.guzhenren.registry.ModAttachment;
-import net.minecraft.server.level.ServerPlayer;
-
 import java.util.List;
-import java.util.concurrent.ThreadLocalRandom;
+import net.alex.guzhenren.enums.core.Rank;
+import net.alex.guzhenren.enums.core.Stage;
+import net.alex.guzhenren.enums.core.Talent;
+import net.alex.guzhenren.enums.core.TenExtreme;
+import net.alex.guzhenren.enums.path.Attainment;
+import net.alex.guzhenren.enums.path.Path;
+import net.alex.guzhenren.gameplay.data.CoreComponent;
+import net.alex.guzhenren.gameplay.data.ModPlayerData;
+import net.alex.guzhenren.registry.ModAttachments;
+import net.minecraft.server.level.ServerPlayer;
 
 public class PlayerCoreActions {
 
-    private static final List<Rank> RANK_ORDER  = List.of(Rank.ONE, Rank.TWO, Rank.THREE, Rank.FOUR, Rank.FIVE);
+    private static final List<Rank> RANK_ORDER = List.of(Rank.ONE, Rank.TWO, Rank.THREE, Rank.FOUR, Rank.FIVE);
     private static final List<Stage> STAGE_ORDER = List.of(Stage.INIT, Stage.MIDDLE, Stage.UPPER, Stage.PEAK);
 
     //region PRECONDITION
     public static boolean canAwaken(ModPlayerData data) {
         return !data.status().isApertureAwakened()
-                && data.cultivation().getPlayerTalent() == Talent.NONE
-                && data.cultivation().getPlayerRank() == Rank.MORTAL
-                && data.cultivation().getPlayerStage() == Stage.NONE
-                && data.cultivation().getPlayerExtremePhysique() == TenExtreme.NONE;
+                && data.core().getPlayerTalent() == Talent.NONE
+                && data.core().getPlayerRank() == Rank.MORTAL
+                && data.core().getPlayerStage() == Stage.NONE
+                && data.core().getPlayerExtremePhysique() == TenExtreme.NONE;
     }
 
     public static boolean isAwakened(ModPlayerData data) {
         return data.status().isApertureAwakened();
     }
-    //endregion
+//endregion
 
     //region AWAKEN
     public static void awaken(ServerPlayer player) {
-        Talent t = randomNonNoneTalent();
+        Talent t = Talent.randomNonNone();
         doAwaken(player, t, Talent.randomMaxEssence(t));
     }
 
@@ -44,104 +46,103 @@ public class PlayerCoreActions {
     }
 
     private static void doAwaken(ServerPlayer player, Talent talent, int percent) {
-        ModPlayerData data = player.getData(ModAttachment.PLAYER_DATA.get());
-        CoreComponent c = data.cultivation();
+        ModPlayerData data = player.getData(ModAttachments.PLAYER_DATA.get());
+        CoreComponent c = data.core();
         c.setPlayerTalent(talent);
         c.setPlayerBaseEssence(percent);
         c.setPlayerRank(Rank.ONE);
         c.setPlayerStage(Stage.INIT);
-        c.setPlayerExtremePhysique(talent == Talent.TEN_EXTREME ? randomTenExtreme() : TenExtreme.NONE);
+        c.setPlayerExtremePhysique(talent == Talent.TEN_EXTREME ? TenExtreme.randomNonNone() : TenExtreme.NONE);
         data.status().setApertureAwakened(true);
         recomputeMax(data);
         data.essence().refillCurrentEssence();
     }
-    //endregion
+//endregion
 
     //region RANK / STAGE
     public static boolean rankUp(ServerPlayer player) {
-        ModPlayerData data = player.getData(ModAttachment.PLAYER_DATA.get());
-        int idx = RANK_ORDER.indexOf(data.cultivation().getPlayerRank());
+        ModPlayerData data = player.getData(ModAttachments.PLAYER_DATA.get());
+        int idx = RANK_ORDER.indexOf(data.core().getPlayerRank());
         if (idx == -1 || idx >= RANK_ORDER.size() - 1) return false;
         setRank(player, RANK_ORDER.get(idx + 1));
         return true;
     }
 
     public static boolean rankDown(ServerPlayer player) {
-        ModPlayerData data = player.getData(ModAttachment.PLAYER_DATA.get());
-        int idx = RANK_ORDER.indexOf(data.cultivation().getPlayerRank());
+        ModPlayerData data = player.getData(ModAttachments.PLAYER_DATA.get());
+        int idx = RANK_ORDER.indexOf(data.core().getPlayerRank());
         if (idx <= 0) return false;
         setRank(player, RANK_ORDER.get(idx - 1));
         return true;
     }
 
     public static void setRank(ServerPlayer player, Rank rank) {
-        ModPlayerData data = player.getData(ModAttachment.PLAYER_DATA.get());
-        data.cultivation().setPlayerRank(rank);
+        ModPlayerData data = player.getData(ModAttachments.PLAYER_DATA.get());
+        data.core().setPlayerRank(rank);
         recomputeMax(data);
     }
 
     public static boolean stageUp(ServerPlayer player) {
-        ModPlayerData data = player.getData(ModAttachment.PLAYER_DATA.get());
-        int idx = STAGE_ORDER.indexOf(data.cultivation().getPlayerStage());
+        ModPlayerData data = player.getData(ModAttachments.PLAYER_DATA.get());
+        int idx = STAGE_ORDER.indexOf(data.core().getPlayerStage());
         if (idx == -1 || idx >= STAGE_ORDER.size() - 1) return false;
         setStage(player, STAGE_ORDER.get(idx + 1));
         return true;
     }
 
     public static boolean stageDown(ServerPlayer player) {
-        ModPlayerData data = player.getData(ModAttachment.PLAYER_DATA.get());
-        int idx = STAGE_ORDER.indexOf(data.cultivation().getPlayerStage());
+        ModPlayerData data = player.getData(ModAttachments.PLAYER_DATA.get());
+        int idx = STAGE_ORDER.indexOf(data.core().getPlayerStage());
         if (idx <= 0) return false;
         setStage(player, STAGE_ORDER.get(idx - 1));
         return true;
     }
 
     public static void setStage(ServerPlayer player, Stage stage) {
-        ModPlayerData data = player.getData(ModAttachment.PLAYER_DATA.get());
-        data.cultivation().setPlayerStage(stage);
+        ModPlayerData data = player.getData(ModAttachments.PLAYER_DATA.get());
+        data.core().setPlayerStage(stage);
         recomputeMax(data);
     }
-    //endregion
+//endregion
 
     //region TALENT / BASE / PHYSIQUE
     public static void setTalent(ServerPlayer player, Talent talent) {
-        ModPlayerData data = player.getData(ModAttachment.PLAYER_DATA.get());
-        CoreComponent c = data.cultivation();
+        ModPlayerData data = player.getData(ModAttachments.PLAYER_DATA.get());
+        CoreComponent c = data.core();
         c.setPlayerTalent(talent);
         c.setPlayerBaseEssence(Talent.randomMaxEssence(talent));
-        if (talent == Talent.TEN_EXTREME) c.setPlayerExtremePhysique(randomTenExtreme());
+        if (talent == Talent.TEN_EXTREME) c.setPlayerExtremePhysique(TenExtreme.randomNonNone());
         recomputeMax(data);
     }
 
-    /** 加 baseEssence; 若结算后 talent 跨入 TEN_EXTREME 区间且 physique 仍 NONE, 随机一个 physique */
     public static void addBaseEssence(ServerPlayer player, int amount) {
-        ModPlayerData data = player.getData(ModAttachment.PLAYER_DATA.get());
-        data.cultivation().addPlayerBaseEssence(amount);
+        ModPlayerData data = player.getData(ModAttachments.PLAYER_DATA.get());
+        data.core().addPlayerBaseEssence(amount);
         ensurePhysiqueIfTenExtreme(data);
         recomputeMax(data);
     }
 
     public static void subBaseEssence(ServerPlayer player, int amount) {
-        ModPlayerData data = player.getData(ModAttachment.PLAYER_DATA.get());
-        data.cultivation().subPlayerBaseEssence(amount);
+        ModPlayerData data = player.getData(ModAttachments.PLAYER_DATA.get());
+        data.core().subPlayerBaseEssence(amount);
         ensurePhysiqueIfTenExtreme(data);
         recomputeMax(data);
     }
 
     public static void setPhysique(ServerPlayer player, TenExtreme physique) {
-        ModPlayerData data = player.getData(ModAttachment.PLAYER_DATA.get());
-        CoreComponent c = data.cultivation();
+        ModPlayerData data = player.getData(ModAttachments.PLAYER_DATA.get());
+        CoreComponent c = data.core();
         c.setPlayerTalent(Talent.TEN_EXTREME);
         c.setPlayerBaseEssence(100);
         c.setPlayerExtremePhysique(physique);
         recomputeMax(data);
     }
-    //endregion
+//endregion
 
     //region RESET
     public static void reset(ServerPlayer player) {
-        ModPlayerData data = player.getData(ModAttachment.PLAYER_DATA.get());
-        CoreComponent c = data.cultivation();
+        ModPlayerData data = player.getData(ModAttachments.PLAYER_DATA.get());
+        CoreComponent c = data.core();
         c.setPlayerRank(Rank.MORTAL);
         c.setPlayerStage(Stage.NONE);
         c.setPlayerTalent(Talent.NONE);
@@ -154,38 +155,23 @@ public class PlayerCoreActions {
             data.path().setMarks(p, 0L);
         }
     }
-    //endregion
+//endregion
 
     //region HELPERS
-    static void recomputeMax(ModPlayerData data) {
+    private static void recomputeMax(ModPlayerData data) {
         data.essence().recomputeMaxEssence(
-                data.cultivation().getPlayerBaseEssence(),
-                data.cultivation().getPlayerRank(),
-                data.cultivation().getPlayerStage()
+                data.core().getPlayerBaseEssence(),
+                data.core().getPlayerRank(),
+                data.core().getPlayerStage()
         );
     }
 
-    /** 跨入 TEN_EXTREME 时若 physique == NONE 自动 roll 一个 */
     private static void ensurePhysiqueIfTenExtreme(ModPlayerData data) {
-        CoreComponent c = data.cultivation();
+        CoreComponent c = data.core();
         if (c.getPlayerTalent() == Talent.TEN_EXTREME
                 && c.getPlayerExtremePhysique() == TenExtreme.NONE) {
-            c.setPlayerExtremePhysique(randomTenExtreme());
+            c.setPlayerExtremePhysique(TenExtreme.randomNonNone());
         }
     }
-
-    private static Talent randomNonNoneTalent() {
-        Talent[] vals = Talent.values();
-        Talent t;
-        do { t = vals[ThreadLocalRandom.current().nextInt(vals.length)]; } while (t == Talent.NONE);
-        return t;
-    }
-
-    private static TenExtreme randomTenExtreme() {
-        TenExtreme[] vals = TenExtreme.values();
-        TenExtreme t;
-        do { t = vals[ThreadLocalRandom.current().nextInt(vals.length)]; } while (t == TenExtreme.NONE);
-        return t;
-    }
-    //endregion
+//endregion
 }

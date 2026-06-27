@@ -2,7 +2,10 @@ package net.alex.guzhenren.gameplay.data;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.alex.guzhenren.enums.core.*;
+import net.alex.guzhenren.enums.core.Rank;
+import net.alex.guzhenren.enums.core.Stage;
+import net.alex.guzhenren.enums.core.Talent;
+import net.alex.guzhenren.enums.core.TenExtreme;
 
 public class CoreComponent {
 
@@ -27,7 +30,6 @@ public class CoreComponent {
         this.playerTalent = Talent.NONE;
         this.playerExtremePhysique = TenExtreme.NONE;
         this.playerBaseEssence = 0;
-        this.dirty = false;
     }
 
     public CoreComponent(Rank rank, Stage stage, Talent talent, TenExtreme physique, int baseEssence) {
@@ -39,12 +41,26 @@ public class CoreComponent {
     }
 
     //region GETTER
-    public Rank getPlayerRank() { return playerRank; }
-    public Stage getPlayerStage() { return playerStage; }
-    public Talent getPlayerTalent() { return playerTalent; }
-    public TenExtreme getPlayerExtremePhysique() { return playerExtremePhysique; }
-    public int getPlayerBaseEssence() { return playerBaseEssence; }
-    //endregion
+    public Rank getPlayerRank() {
+        return playerRank;
+    }
+
+    public Stage getPlayerStage() {
+        return playerStage;
+    }
+
+    public Talent getPlayerTalent() {
+        return playerTalent;
+    }
+
+    public TenExtreme getPlayerExtremePhysique() {
+        return playerExtremePhysique;
+    }
+
+    public int getPlayerBaseEssence() {
+        return playerBaseEssence;
+    }
+//endregion
 
     //region SETTER
     public void setPlayerRank(Rank rank) {
@@ -82,7 +98,7 @@ public class CoreComponent {
         }
         this.dirty = true;
     }
-    //endregion
+//endregion
 
     //region BASE ESSENCE
     public void addPlayerBaseEssence(int amount) {
@@ -94,10 +110,15 @@ public class CoreComponent {
         if (amount <= 0) return;
         setPlayerBaseEssence(this.playerBaseEssence - amount);
     }
-    //endregion
+//endregion
 
     //region DIRTY
-    public boolean isDirty() { return dirty; }
-    public void clearDirty() { this.dirty = false; }
-    //endregion
+    public boolean isDirty() {
+        return dirty;
+    }
+
+    public void clearDirty() {
+        this.dirty = false;
+    }
+//endregion
 }

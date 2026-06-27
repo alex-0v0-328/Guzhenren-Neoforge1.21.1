@@ -2,8 +2,12 @@ package net.alex.guzhenren.event;
 
 import net.alex.guzhenren.Guzhenren;
 import net.alex.guzhenren.gameplay.data.ModPlayerData;
-import net.alex.guzhenren.network.sync.*;
-import net.alex.guzhenren.registry.ModAttachment;
+import net.alex.guzhenren.network.sync.CoreSyncPayload;
+import net.alex.guzhenren.network.sync.EssenceSyncPayload;
+import net.alex.guzhenren.network.sync.ModPlayerSyncPayload;
+import net.alex.guzhenren.network.sync.PathSyncPayload;
+import net.alex.guzhenren.network.sync.StatusSyncPayload;
+import net.alex.guzhenren.registry.ModAttachments;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.GameRules;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -20,13 +24,13 @@ public class ModPlayerEvents {
     @SubscribeEvent
     public static void onPlayerTick(PlayerTickEvent.Post event) {
         if (!(event.getEntity() instanceof ServerPlayer sp)) return;
-        ModPlayerData data = sp.getData(ModAttachment.PLAYER_DATA.get());
+        ModPlayerData data = sp.getData(ModAttachments.PLAYER_DATA.get());
 
         data.essence().naturalRecoveryPerTick();
 
-        if (data.cultivation().isDirty()) {
-            PacketDistributor.sendToPlayer(sp, new CoreSyncPayload(data.cultivation()));
-            data.cultivation().clearDirty();
+        if (data.core().isDirty()) {
+            PacketDistributor.sendToPlayer(sp, new CoreSyncPayload(data.core()));
+            data.core().clearDirty();
         }
         if (data.status().isDirty()) {
             PacketDistributor.sendToPlayer(sp, new StatusSyncPayload(data.status()));
@@ -45,14 +49,14 @@ public class ModPlayerEvents {
     @SubscribeEvent
     public static void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
         if (!(event.getEntity() instanceof ServerPlayer sp)) return;
-        ModPlayerData data = sp.getData(ModAttachment.PLAYER_DATA.get());
+        ModPlayerData data = sp.getData(ModAttachments.PLAYER_DATA.get());
         PacketDistributor.sendToPlayer(sp, new ModPlayerSyncPayload(data));
     }
 
     @SubscribeEvent
     public static void onPlayerRespawn(PlayerEvent.PlayerRespawnEvent event) {
         if (!(event.getEntity() instanceof ServerPlayer sp)) return;
-        ModPlayerData data = sp.getData(ModAttachment.PLAYER_DATA.get());
+        ModPlayerData data = sp.getData(ModAttachments.PLAYER_DATA.get());
         PacketDistributor.sendToPlayer(sp, new ModPlayerSyncPayload(data));
     }
 
@@ -66,8 +70,8 @@ public class ModPlayerEvents {
             if (!keep) return;
         }
 
-        ModPlayerData oldData = oldPlayer.getData(ModAttachment.PLAYER_DATA.get());
-        ModPlayerData newData = newPlayer.getData(ModAttachment.PLAYER_DATA.get());
+        ModPlayerData oldData = oldPlayer.getData(ModAttachments.PLAYER_DATA.get());
+        ModPlayerData newData = newPlayer.getData(ModAttachments.PLAYER_DATA.get());
         newData.copyFrom(oldData);
     }
 }

@@ -20,5 +20,8 @@ public record ModPlayerSyncPayload(ModPlayerData data) implements CustomPacketPa
                     ModPlayerSyncPayload::new
             );
 
-    @Override public @NotNull Type<? extends CustomPacketPayload> type() { return TYPE; }
+    @Override
+    public @NotNull Type<? extends CustomPacketPayload> type() {
+        return TYPE;
+    }
 }

@@ -2,10 +2,10 @@ package net.alex.guzhenren.gameplay.data;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.alex.guzhenren.enums.path.*;
-
 import java.util.EnumMap;
 import java.util.Map;
+import net.alex.guzhenren.enums.path.Attainment;
+import net.alex.guzhenren.enums.path.Path;
 
 public class PathComponent {
 
@@ -35,31 +35,48 @@ public class PathComponent {
     }
 
     //region GETTER
-    public Attainment getAttainment(Path path) { return attainments.get(path); }
-    public long getMarks(Path path) { return marks.get(path); }
-    //endregion
+    public Attainment getAttainment(Path path) {
+        return attainments.get(path);
+    }
+
+    public long getMarks(Path path) {
+        return marks.get(path);
+    }
+//endregion
 
     //region SETTER
-    public void setAttainment(Path path, Attainment attainment) { attainments.put(path, attainment); this.dirty = true; }
-    public void setMarks(Path path, long value) { marks.put(path, Math.max(0L, value)); this.dirty = true; }
-    //endregion
+    public void setAttainment(Path path, Attainment attainment) {
+        attainments.put(path, attainment);
+        this.dirty = true;
+    }
+
+    public void setMarks(Path path, long value) {
+        marks.put(path, Math.max(0L, value));
+        this.dirty = true;
+    }
+//endregion
 
     //region MARKS
     public void addMarks(Path path, long amount) {
         if (amount <= 0L) return;
-        marks.computeIfPresent(path, (k, c) -> c + amount);
+        marks.computeIfPresent(path, (k, cur) -> cur + amount);
         this.dirty = true;
     }
 
     public void subMarks(Path path, long amount) {
         if (amount <= 0L) return;
-        marks.computeIfPresent(path, (k, c) -> Math.max(0L, c - amount));
+        marks.computeIfPresent(path, (k, cur) -> Math.max(0L, cur - amount));
         this.dirty = true;
     }
-    //endregion
+//endregion
 
     //region DIRTY
-    public boolean isDirty() { return dirty; }
-    public void clearDirty() { this.dirty = false; }
-    //endregion
+    public boolean isDirty() {
+        return dirty;
+    }
+
+    public void clearDirty() {
+        this.dirty = false;
+    }
+//endregion
 }

@@ -14,11 +14,14 @@ public enum Path implements StringRepresentable {
     STRENGTH, DREAM, REFINEMENT, WISDOM, THEFT,
     LUCK, KILLING, BLOOD, SOUL, ENSLAVEMENT;
 
-    public static final Codec<Path> CODEC =
-            StringRepresentable.fromEnum(Path::values);
+    public static final Codec<Path> CODEC = StringRepresentable.fromEnum(Path::values);
 
     @Override
-    public @NotNull String getSerializedName() { return name().toLowerCase(); }
+    public @NotNull String getSerializedName() {
+        return name().toLowerCase();
+    }
 
-    public String getTranslationKey() { return "guzhenren.enum.path.path." + name().toLowerCase(); }
+    public String getTranslationKey() {
+        return "guzhenren.enum.path.path." + name().toLowerCase();
+    }
 }

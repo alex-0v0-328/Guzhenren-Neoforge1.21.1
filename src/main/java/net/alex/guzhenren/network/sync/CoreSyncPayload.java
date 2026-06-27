@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 public record CoreSyncPayload(CoreComponent data) implements CustomPacketPayload {
 
     public static final CustomPacketPayload.Type<CoreSyncPayload> TYPE =
-            new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(Guzhenren.MOD_ID, "sync_cultivation"));
+            new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(Guzhenren.MOD_ID, "sync_core"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, CoreSyncPayload> STREAM_CODEC =
             StreamCodec.composite(
@@ -20,5 +20,8 @@ public record CoreSyncPayload(CoreComponent data) implements CustomPacketPayload
                     CoreSyncPayload::new
             );
 
-    @Override public @NotNull Type<? extends CustomPacketPayload> type() { return TYPE; }
+    @Override
+    public @NotNull Type<? extends CustomPacketPayload> type() {
+        return TYPE;
+    }
 }
