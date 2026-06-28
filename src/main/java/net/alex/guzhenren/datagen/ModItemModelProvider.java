@@ -15,5 +15,6 @@ public class ModItemModelProvider extends ItemModelProvider {
     @Override
     protected void registerModels() {
         basicItem(ModItems.ESSENCE_STONE.get());
+        basicItem(ModItems.HOPE_GU.get());
     }
 }

@@ -23,6 +23,15 @@ public class ModCreativeTabs {
                     })
                     .build());
 
+    public static final Supplier<CreativeModeTab> MORTAL_GU = CREATIVE_MODE_TABS.register("mortal_gu",
+            () -> CreativeModeTab.builder()
+                    .title(Component.translatable("guzhenren.itemGroup.mortal_gu"))
+                    .icon(() -> new ItemStack(ModItems.HOPE_GU.get()))
+                    .displayItems((parameters, output) -> {
+                        output.accept(ModItems.HOPE_GU.get());
+                    })
+                    .build());
+
     public static void register(IEventBus modEventBus) {
         CREATIVE_MODE_TABS.register(modEventBus);
     }

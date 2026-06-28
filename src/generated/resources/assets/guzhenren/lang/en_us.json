@@ -103,6 +103,7 @@
   "guzhenren.enum.path.path.enslavement": "Enslavement Path",
   "guzhenren.enum.path.path.fire": "Fire Path",
   "guzhenren.enum.path.path.heaven": "Heaven Path",
+  "guzhenren.enum.path.path.human": "Human Path",
   "guzhenren.enum.path.path.ice_snow": "Ice-Snow Path",
   "guzhenren.enum.path.path.killing": "Killing Path",
   "guzhenren.enum.path.path.light": "Light Path",
@@ -121,11 +122,17 @@
   "guzhenren.enum.path.path.water": "Water Path",
   "guzhenren.enum.path.path.wisdom": "Wisdom Path",
   "guzhenren.enum.path.path.wood": "Wood Path",
+  "guzhenren.gu.tooltip.category.mortal": "Mortal Gu",
+  "guzhenren.gu.tooltip.line": "%s %s %s",
   "guzhenren.hud.lifespan": "Age: %s | Lifespan: %s",
   "guzhenren.hud.soul": "Soul: %s (%s)",
   "guzhenren.hud.talent": "Talent: %s",
   "guzhenren.itemGroup.gu_materials": "Gu Materials",
+  "guzhenren.itemGroup.mortal_gu": "Mortal Gu",
   "item.guzhenren.essence_stone": "Essence Stone",
   "item.guzhenren.essence_stone.use_failed.full": "Essence is already full.",
-  "item.guzhenren.essence_stone.use_failed.not_awakened": "Awaken your aperture first."
+  "item.guzhenren.essence_stone.use_failed.not_awakened": "Awaken your aperture first.",
+  "item.guzhenren.hope_gu": "Hope Gu",
+  "item.guzhenren.hope_gu.use_failed": "You are already awakened.",
+  "item.guzhenren.hope_gu.use_success": "Hope Gu opened your aperture."
 }

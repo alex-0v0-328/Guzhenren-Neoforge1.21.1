@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 
 public enum Path implements StringRepresentable {
 
-    HEAVEN, RULE, SPACE, TIME,
+    HEAVEN, RULE, SPACE, TIME, HUMAN,
 
     METAL, WOOD, WATER, FIRE, EARTH, ICE_SNOW, LIGHTNING,
     QI, SOUND, LIGHT, DARK,
@@ -17,11 +17,7 @@ public enum Path implements StringRepresentable {
     public static final Codec<Path> CODEC = StringRepresentable.fromEnum(Path::values);
 
     @Override
-    public @NotNull String getSerializedName() {
-        return name().toLowerCase();
-    }
+    public @NotNull String getSerializedName() { return name().toLowerCase(); }
 
-    public String getTranslationKey() {
-        return "guzhenren.enum.path.path." + name().toLowerCase();
-    }
+    public String getTranslationKey() { return "guzhenren.enum.path.path." + name().toLowerCase(); }
 }

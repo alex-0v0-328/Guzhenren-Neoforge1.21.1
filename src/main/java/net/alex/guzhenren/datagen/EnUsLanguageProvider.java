@@ -28,6 +28,7 @@ public class EnUsLanguageProvider extends LanguageProvider {
         addCommandKeys();
         addItemKeys();
         addLifespanSoulKeys();
+        addGuKeys();
     }
 
     private void addRank() {
@@ -194,5 +195,19 @@ public class EnUsLanguageProvider extends LanguageProvider {
 
         add("death.attack.lifespan_depleted", "%1$s ran out of lifespan");
         add("death.attack.soul_collapsed", "%1$s's soul collapsed");
+    }
+
+    private void addGuKeys() {
+        add(Path.HUMAN.getTranslationKey(), "Human Path");
+
+        add("guzhenren.itemGroup.mortal_gu", "Mortal Gu");
+
+        add("item.guzhenren.hope_gu", "Hope Gu");
+
+        add("guzhenren.gu.tooltip.category.mortal", "Mortal Gu");
+        add("guzhenren.gu.tooltip.line", "%s %s %s");
+
+        add("item.guzhenren.hope_gu.use_success", "Hope Gu opened your aperture.");
+        add("item.guzhenren.hope_gu.use_failed", "You are already awakened.");
     }
 }

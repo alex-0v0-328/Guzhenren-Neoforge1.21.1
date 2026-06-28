@@ -28,6 +28,7 @@ public class ZhCnLanguageProvider extends LanguageProvider {
         addCommandKeys();
         addItemKeys();
         addLifespanSoulKeys();
+        addGuKeys();
     }
 
     private void addRank() {
@@ -194,5 +195,19 @@ public class ZhCnLanguageProvider extends LanguageProvider {
 
         add("death.attack.lifespan_depleted", "%1$s 寿元已尽而亡");
         add("death.attack.soul_collapsed", "%1$s 魂魄衰竭而亡");
+    }
+
+    private void addGuKeys() {
+        add(Path.HUMAN.getTranslationKey(), "人道");
+
+        add("guzhenren.itemGroup.mortal_gu", "凡蛊");
+
+        add("item.guzhenren.hope_gu", "希望蛊");
+
+        add("guzhenren.gu.tooltip.category.mortal", "凡蛊");
+        add("guzhenren.gu.tooltip.line", "%s%s%s");
+
+        add("item.guzhenren.hope_gu.use_success", "希望蛊已助你开窍。");
+        add("item.guzhenren.hope_gu.use_failed", "你已开窍，无需此蛊。");
     }
 }
