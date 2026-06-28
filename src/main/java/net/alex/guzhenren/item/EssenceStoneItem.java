@@ -40,7 +40,7 @@ public class EssenceStoneItem extends Item {
             return InteractionResultHolder.fail(stack);
         }
 
-        float recovery = (float) (essence.getMaxEssence() / RECOVERY_DIVISOR);
+        float recovery = (float) essence.getMaxEssence() / RECOVERY_DIVISOR;
         essence.addCurrent(recovery);
 
         if (!sp.getAbilities().instabuild) {

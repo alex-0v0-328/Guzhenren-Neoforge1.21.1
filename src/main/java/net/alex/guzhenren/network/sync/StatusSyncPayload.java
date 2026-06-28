@@ -21,7 +21,5 @@ public record StatusSyncPayload(StatusComponent data) implements CustomPacketPay
             );
 
     @Override
-    public @NotNull Type<? extends CustomPacketPayload> type() {
-        return TYPE;
-    }
+    public @NotNull Type<? extends CustomPacketPayload> type() { return TYPE; }
 }

@@ -155,6 +155,8 @@ public class PlayerCoreActions {
             data.path().setMarks(p, 0L);
         }
         data.path().markFullSync();
+        data.lifespan().reset();
+        data.soul().reset();
     }
 //endregion
 

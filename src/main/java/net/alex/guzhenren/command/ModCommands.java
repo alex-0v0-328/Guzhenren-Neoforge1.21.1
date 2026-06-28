@@ -2,13 +2,16 @@ package net.alex.guzhenren.command;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import net.alex.guzhenren.enums.core.SoulLevel;
 import net.alex.guzhenren.enums.core.TenExtreme;
 import net.alex.guzhenren.enums.path.Path;
 import net.alex.guzhenren.gameplay.action.PlayerCoreActions;
 import net.alex.guzhenren.gameplay.data.CoreComponent;
 import net.alex.guzhenren.gameplay.data.EssenceComponent;
+import net.alex.guzhenren.gameplay.data.LifespanComponent;
 import net.alex.guzhenren.gameplay.data.ModPlayerData;
 import net.alex.guzhenren.gameplay.data.PathComponent;
+import net.alex.guzhenren.gameplay.data.SoulComponent;
 import net.alex.guzhenren.registry.ModAttachments;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -30,6 +33,8 @@ public class ModCommands {
                         .then(CoreCommands.buildPhysique())
                         .then(EssenceCommands.buildEssence())
                         .then(PathCommands.buildPath())
+                        .then(LifespanCommands.buildLifespan())
+                        .then(SoulCommands.buildSoul())
                         .then(buildReset())
         );
     }
@@ -46,6 +51,8 @@ public class ModCommands {
         CoreComponent core = data.core();
         EssenceComponent essence = data.essence();
         PathComponent path = data.path();
+        LifespanComponent lifespan = data.lifespan();
+        SoulComponent soul = data.soul();
 
         src.sendSuccess(() -> Component.translatable("guzhenren.command.info.core",
                 Component.translatable(core.getPlayerRank().getTranslationKey()),
@@ -68,6 +75,13 @@ public class ModCommands {
         } else {
             src.sendSuccess(() -> Component.translatable("guzhenren.command.info.not_awakened"), false);
         }
+
+        src.sendSuccess(() -> Component.translatable("guzhenren.command.info.lifespan",
+                lifespan.getAge(), lifespan.getRemainingYears()), false);
+
+        SoulLevel soulLevel = SoulLevel.fromSoulValue(soul.getSoul());
+        src.sendSuccess(() -> Component.translatable("guzhenren.command.info.soul",
+                Component.translatable(soulLevel.getTranslationKey()), soul.getSoul()), false);
 
         boolean any = false;
         for (Path p : Path.values()) {
@@ -99,7 +113,6 @@ public class ModCommands {
 //endregion
 
     //region HELPERS
-    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     static boolean requireAwakened(CommandSourceStack src, ServerPlayer player) {
         ModPlayerData data = player.getData(ModAttachments.PLAYER_DATA.get());
         if (!PlayerCoreActions.isAwakened(data)) {

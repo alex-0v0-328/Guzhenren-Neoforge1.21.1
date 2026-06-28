@@ -2,6 +2,7 @@ package net.alex.guzhenren.datagen;
 
 import net.alex.guzhenren.Guzhenren;
 import net.alex.guzhenren.enums.core.Rank;
+import net.alex.guzhenren.enums.core.SoulLevel;
 import net.alex.guzhenren.enums.core.Stage;
 import net.alex.guzhenren.enums.core.Talent;
 import net.alex.guzhenren.enums.core.TenExtreme;
@@ -26,6 +27,7 @@ public class EnUsLanguageProvider extends LanguageProvider {
         addAttainment();
         addCommandKeys();
         addItemKeys();
+        addLifespanSoulKeys();
     }
 
     private void addRank() {
@@ -161,5 +163,36 @@ public class EnUsLanguageProvider extends LanguageProvider {
         add("item.guzhenren.essence_stone", "Essence Stone");
         add("item.guzhenren.essence_stone.use_failed.not_awakened", "Awaken your aperture first.");
         add("item.guzhenren.essence_stone.use_failed.full", "Essence is already full.");
+    }
+
+    private void addLifespanSoulKeys() {
+        add(SoulLevel.ONE_PERSON.getTranslationKey(), "One-Person Soul");
+        add(SoulLevel.TEN_PEOPLE.getTranslationKey(), "Ten-People Soul");
+        add(SoulLevel.HUNDRED_PEOPLE.getTranslationKey(), "Hundred-People Soul");
+        add(SoulLevel.THOUSAND_PEOPLE.getTranslationKey(), "Thousand-People Soul");
+        add(SoulLevel.TEN_THOUSAND.getTranslationKey(), "Ten-Thousand Soul");
+        add(SoulLevel.HUNDRED_THOUSAND.getTranslationKey(), "Hundred-Thousand Soul");
+        add(SoulLevel.MILLION.getTranslationKey(), "Million Soul");
+        add(SoulLevel.TEN_MILLION.getTranslationKey(), "Ten-Million Soul");
+        add(SoulLevel.HUNDRED_MILLION.getTranslationKey(), "Hundred-Million Soul");
+
+        add("guzhenren.hud.talent", "Talent: %s");
+        add("guzhenren.hud.lifespan", "Age: %s | Lifespan: %s");
+        add("guzhenren.hud.soul", "Soul: %s (%s)");
+
+        add("guzhenren.command.info.lifespan", "Age: %s | Lifespan: %s");
+        add("guzhenren.command.info.soul", "Soul: %s (%s)");
+
+        add("guzhenren.command.success.lifespan_added", "[GZR] Max lifespan +%s.");
+        add("guzhenren.command.success.lifespan_subbed", "[GZR] Max lifespan -%s.");
+        add("guzhenren.command.success.age_set", "[GZR] Age set to %s.");
+        add("guzhenren.command.success.lifespan_reset", "[GZR] Lifespan reset.");
+
+        add("guzhenren.command.success.soul_added", "[GZR] Soul +%s.");
+        add("guzhenren.command.success.soul_subbed", "[GZR] Soul -%s.");
+        add("guzhenren.command.success.soul_reset", "[GZR] Soul reset.");
+
+        add("death.attack.lifespan_depleted", "%1$s ran out of lifespan");
+        add("death.attack.soul_collapsed", "%1$s's soul collapsed");
     }
 }

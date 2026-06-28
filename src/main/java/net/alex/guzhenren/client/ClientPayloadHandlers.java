@@ -2,9 +2,11 @@ package net.alex.guzhenren.client;
 
 import net.alex.guzhenren.network.sync.CoreSyncPayload;
 import net.alex.guzhenren.network.sync.EssenceSyncPayload;
+import net.alex.guzhenren.network.sync.LifespanSyncPayload;
 import net.alex.guzhenren.network.sync.ModPlayerSyncPayload;
 import net.alex.guzhenren.network.sync.PathDeltaSyncPayload;
 import net.alex.guzhenren.network.sync.PathSyncPayload;
+import net.alex.guzhenren.network.sync.SoulSyncPayload;
 import net.alex.guzhenren.network.sync.StatusSyncPayload;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
@@ -32,5 +34,13 @@ public class ClientPayloadHandlers {
 
     public static void handlePathDelta(PathDeltaSyncPayload payload, IPayloadContext ctx) {
         ctx.enqueueWork(() -> ClientPlayerData.applyPathDeltas(payload.deltas()));
+    }
+
+    public static void handleLifespan(LifespanSyncPayload payload, IPayloadContext ctx) {
+        ctx.enqueueWork(() -> ClientPlayerData.setLifespan(payload.data()));
+    }
+
+    public static void handleSoul(SoulSyncPayload payload, IPayloadContext ctx) {
+        ctx.enqueueWork(() -> ClientPlayerData.setSoul(payload.data()));
     }
 }

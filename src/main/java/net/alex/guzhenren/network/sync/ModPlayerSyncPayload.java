@@ -21,7 +21,5 @@ public record ModPlayerSyncPayload(ModPlayerData data) implements CustomPacketPa
             );
 
     @Override
-    public @NotNull Type<? extends CustomPacketPayload> type() {
-        return TYPE;
-    }
+    public @NotNull Type<? extends CustomPacketPayload> type() { return TYPE; }
 }

@@ -1,8 +1,12 @@
 package net.alex.guzhenren.client.hud;
 
 import net.alex.guzhenren.client.ClientPlayerData;
+import net.alex.guzhenren.enums.core.SoulLevel;
+import net.alex.guzhenren.enums.core.TenExtreme;
 import net.alex.guzhenren.gameplay.data.CoreComponent;
 import net.alex.guzhenren.gameplay.data.EssenceComponent;
+import net.alex.guzhenren.gameplay.data.LifespanComponent;
+import net.alex.guzhenren.gameplay.data.SoulComponent;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -28,28 +32,58 @@ public class PlayerStatsHud implements LayeredDraw.Layer {
 
         CoreComponent core = ClientPlayerData.getCore();
         EssenceComponent essence = ClientPlayerData.getEssence();
+        LifespanComponent lifespan = ClientPlayerData.getLifespan();
+        SoulComponent soul = ClientPlayerData.getSoul();
         boolean awakened = ClientPlayerData.getStatus().isApertureAwakened();
 
-        // 第一行: 修为 (Rank + Stage), 始终显示
+        int y = MARGIN_Y;
+
+        // Line 1: 修为
         Component rankStage = Component.translatable(core.getPlayerRank().getTranslationKey())
                 .append(Component.literal(" "))
                 .append(Component.translatable(core.getPlayerStage().getTranslationKey()));
-        gui.drawString(mc.font, rankStage, MARGIN_X, MARGIN_Y, TEXT_COLOR);
+        gui.drawString(mc.font, rankStage, MARGIN_X, y, TEXT_COLOR);
+        y += LINE_HEIGHT;
 
-        // 第二行: 真元条, 未开窍时不显示
-        if (!awakened) return;
+        // Line 2: 资质
+        Component talentMsg = Component.translatable(core.getPlayerTalent().getTranslationKey())
+                .copy().append(Component.literal(" " + core.getPlayerBaseEssence() + "%"));
+        TenExtreme physique = core.getPlayerExtremePhysique();
+        if (physique != TenExtreme.NONE) {
+            talentMsg = talentMsg.copy().append(Component.literal(" ["))
+                    .append(Component.translatable(physique.getTranslationKey()))
+                    .append(Component.literal("]"));
+        }
+        gui.drawString(mc.font, Component.translatable("guzhenren.hud.talent", talentMsg), MARGIN_X, y, TEXT_COLOR);
+        y += LINE_HEIGHT;
 
-        int barY = MARGIN_Y + LINE_HEIGHT;
-        long max = essence.getMaxEssence();
-        float cur = essence.getCurrentEssence();
-        float ratio = max > 0 ? Math.min(1f, cur / (float) max) : 0f;
-        int fillWidth = (int) (BAR_WIDTH * ratio);
+        // Line 3 + 4: 真元条 + 数值 (仅开窍时)
+        if (awakened) {
+            long max = essence.getMaxEssence();
+            float cur = essence.getCurrentEssence();
+            float ratio = max > 0 ? Math.min(1f, cur / (float) max) : 0f;
+            int fillWidth = (int) (BAR_WIDTH * ratio);
 
-        gui.fill(MARGIN_X, barY, MARGIN_X + BAR_WIDTH, barY + BAR_HEIGHT, BAR_BG_COLOR);
-        gui.fill(MARGIN_X, barY, MARGIN_X + fillWidth, barY + BAR_HEIGHT, BAR_FG_COLOR);
+            gui.fill(MARGIN_X, y, MARGIN_X + BAR_WIDTH, y + BAR_HEIGHT, BAR_BG_COLOR);
+            gui.fill(MARGIN_X, y, MARGIN_X + fillWidth, y + BAR_HEIGHT, BAR_FG_COLOR);
+            y += BAR_HEIGHT + 2;
 
-        // 第三行: 真元数值
-        String text = String.format("%d / %d", (long) cur, max);
-        gui.drawString(mc.font, text, MARGIN_X, barY + BAR_HEIGHT + 2, TEXT_COLOR);
+            String text = String.format("%d / %d", (long) cur, max);
+            gui.drawString(mc.font, text, MARGIN_X, y, TEXT_COLOR);
+            y += LINE_HEIGHT;
+        }
+
+        // Line 5: 年龄 + 寿元
+        gui.drawString(mc.font,
+                Component.translatable("guzhenren.hud.lifespan", lifespan.getAge(), lifespan.getRemainingYears()),
+                MARGIN_X, y, TEXT_COLOR);
+        y += LINE_HEIGHT;
+
+        // Line 6: 魂魄
+        SoulLevel soulLevel = SoulLevel.fromSoulValue(soul.getSoul());
+        gui.drawString(mc.font,
+                Component.translatable("guzhenren.hud.soul",
+                        Component.translatable(soulLevel.getTranslationKey()), soul.getSoul()),
+                MARGIN_X, y, TEXT_COLOR);
     }
 }

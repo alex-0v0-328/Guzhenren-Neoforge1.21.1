@@ -2,6 +2,7 @@ package net.alex.guzhenren.datagen;
 
 import net.alex.guzhenren.Guzhenren;
 import net.alex.guzhenren.enums.core.Rank;
+import net.alex.guzhenren.enums.core.SoulLevel;
 import net.alex.guzhenren.enums.core.Stage;
 import net.alex.guzhenren.enums.core.Talent;
 import net.alex.guzhenren.enums.core.TenExtreme;
@@ -26,6 +27,7 @@ public class ZhCnLanguageProvider extends LanguageProvider {
         addAttainment();
         addCommandKeys();
         addItemKeys();
+        addLifespanSoulKeys();
     }
 
     private void addRank() {
@@ -161,5 +163,36 @@ public class ZhCnLanguageProvider extends LanguageProvider {
         add("item.guzhenren.essence_stone", "元石");
         add("item.guzhenren.essence_stone.use_failed.not_awakened", "请先开窍。");
         add("item.guzhenren.essence_stone.use_failed.full", "真元已满。");
+    }
+
+    private void addLifespanSoulKeys() {
+        add(SoulLevel.ONE_PERSON.getTranslationKey(), "一人魂");
+        add(SoulLevel.TEN_PEOPLE.getTranslationKey(), "十人魂");
+        add(SoulLevel.HUNDRED_PEOPLE.getTranslationKey(), "百人魂");
+        add(SoulLevel.THOUSAND_PEOPLE.getTranslationKey(), "千人魂");
+        add(SoulLevel.TEN_THOUSAND.getTranslationKey(), "万人魂");
+        add(SoulLevel.HUNDRED_THOUSAND.getTranslationKey(), "十万人魂");
+        add(SoulLevel.MILLION.getTranslationKey(), "百万人魂");
+        add(SoulLevel.TEN_MILLION.getTranslationKey(), "千万人魂");
+        add(SoulLevel.HUNDRED_MILLION.getTranslationKey(), "亿人魂");
+
+        add("guzhenren.hud.talent", "资质：%s");
+        add("guzhenren.hud.lifespan", "年龄：%s 岁 | 寿元：%s 年");
+        add("guzhenren.hud.soul", "魂魄：%s（%s）");
+
+        add("guzhenren.command.info.lifespan", "年龄：%s 岁 | 寿元：%s 年");
+        add("guzhenren.command.info.soul", "魂魄：%s（%s）");
+
+        add("guzhenren.command.success.lifespan_added", "[蛊真人] 寿元上限 +%s。");
+        add("guzhenren.command.success.lifespan_subbed", "[蛊真人] 寿元上限 -%s。");
+        add("guzhenren.command.success.age_set", "[蛊真人] 年龄设为 %s 岁。");
+        add("guzhenren.command.success.lifespan_reset", "[蛊真人] 寿元已重置。");
+
+        add("guzhenren.command.success.soul_added", "[蛊真人] 魂魄 +%s。");
+        add("guzhenren.command.success.soul_subbed", "[蛊真人] 魂魄 -%s。");
+        add("guzhenren.command.success.soul_reset", "[蛊真人] 魂魄已重置。");
+
+        add("death.attack.lifespan_depleted", "%1$s 寿元已尽而亡");
+        add("death.attack.soul_collapsed", "%1$s 魂魄衰竭而亡");
     }
 }

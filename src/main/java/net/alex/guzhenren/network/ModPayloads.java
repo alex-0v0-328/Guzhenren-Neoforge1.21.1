@@ -4,9 +4,11 @@ import net.alex.guzhenren.Guzhenren;
 import net.alex.guzhenren.client.ClientPayloadHandlers;
 import net.alex.guzhenren.network.sync.CoreSyncPayload;
 import net.alex.guzhenren.network.sync.EssenceSyncPayload;
+import net.alex.guzhenren.network.sync.LifespanSyncPayload;
 import net.alex.guzhenren.network.sync.ModPlayerSyncPayload;
 import net.alex.guzhenren.network.sync.PathDeltaSyncPayload;
 import net.alex.guzhenren.network.sync.PathSyncPayload;
+import net.alex.guzhenren.network.sync.SoulSyncPayload;
 import net.alex.guzhenren.network.sync.StatusSyncPayload;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -34,5 +36,9 @@ public class ModPayloads {
                 ClientPayloadHandlers::handlePath);
         reg.playToClient(PathDeltaSyncPayload.TYPE, PathDeltaSyncPayload.STREAM_CODEC,
                 ClientPayloadHandlers::handlePathDelta);
+        reg.playToClient(LifespanSyncPayload.TYPE, LifespanSyncPayload.STREAM_CODEC,
+                ClientPayloadHandlers::handleLifespan);
+        reg.playToClient(SoulSyncPayload.TYPE, SoulSyncPayload.STREAM_CODEC,
+                ClientPayloadHandlers::handleSoul);
     }
 }

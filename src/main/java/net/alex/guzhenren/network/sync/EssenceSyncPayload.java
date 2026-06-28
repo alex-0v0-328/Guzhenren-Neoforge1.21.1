@@ -21,7 +21,5 @@ public record EssenceSyncPayload(EssenceComponent data) implements CustomPacketP
             );
 
     @Override
-    public @NotNull Type<? extends CustomPacketPayload> type() {
-        return TYPE;
-    }
+    public @NotNull Type<? extends CustomPacketPayload> type() { return TYPE; }
 }

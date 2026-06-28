@@ -21,7 +21,5 @@ public record CoreSyncPayload(CoreComponent data) implements CustomPacketPayload
             );
 
     @Override
-    public @NotNull Type<? extends CustomPacketPayload> type() {
-        return TYPE;
-    }
+    public @NotNull Type<? extends CustomPacketPayload> type() { return TYPE; }
 }
