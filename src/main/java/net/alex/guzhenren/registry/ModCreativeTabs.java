@@ -29,10 +29,15 @@ public class ModCreativeTabs {
                     .icon(() -> new ItemStack(ModItems.HOPE_GU.get()))
                     .displayItems((parameters, output) -> {
                         output.accept(ModItems.HOPE_GU.get());
+                        output.accept(ModItems.LIFESPAN_GU.get());
+                        output.accept(ModItems.TEN_YEARS_LIFESPAN_GU.get());
+                        output.accept(ModItems.COPPER_RELICS_GU.get());
+                        output.accept(ModItems.STEEL_RELICS_GU.get());
+                        output.accept(ModItems.SILVER_RELICS_GU.get());
+                        output.accept(ModItems.GOLD_RELICS_GU.get());
+                        output.accept(ModItems.CRYSTAL_RELICS_GU.get());
                     })
                     .build());
 
-    public static void register(IEventBus modEventBus) {
-        CREATIVE_MODE_TABS.register(modEventBus);
-    }
+    public static void register(IEventBus modEventBus) { CREATIVE_MODE_TABS.register(modEventBus); }
 }

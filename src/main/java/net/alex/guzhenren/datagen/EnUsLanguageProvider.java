@@ -209,5 +209,21 @@ public class EnUsLanguageProvider extends LanguageProvider {
 
         add("item.guzhenren.hope_gu.use_success", "Hope Gu opened your aperture.");
         add("item.guzhenren.hope_gu.use_failed", "You are already awakened.");
+
+        add("item.guzhenren.lifespan_gu", "Lifespan Gu");
+        add("item.guzhenren.ten_years_lifespan_gu", "Ten-Years Lifespan Gu");
+
+        add("item.guzhenren.lifespan_gu.use_success", "Lifespan Gu extended your lifespan by %s years.");
+        add("item.guzhenren.ten_years_lifespan_gu.use_success", "Ten-Years Lifespan Gu extended your lifespan by %s years.");
+
+        add("item.guzhenren.copper_relics_gu", "Green Copper Relics Gu");
+        add("item.guzhenren.steel_relics_gu", "Red Steel Relics Gu");
+        add("item.guzhenren.silver_relics_gu", "White Silver Relics Gu");
+        add("item.guzhenren.gold_relics_gu", "Yellow Gold Relics Gu");
+        add("item.guzhenren.crystal_relics_gu", "Purple Crystal Relics Gu");
+
+        add("item.guzhenren.relics_gu.use_success", "Relics Gu advanced your stage to %s.");
+        add("item.guzhenren.relics_gu.use_failed.rank_mismatch", "Your rank does not match this Gu.");
+        add("item.guzhenren.relics_gu.use_failed.stage_peak", "You are already at peak stage.");
     }
 }

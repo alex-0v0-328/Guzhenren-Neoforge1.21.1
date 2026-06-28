@@ -41,13 +41,16 @@ public class GuItem extends Item {
         // TODO: 喂食检查 (needFeed)
         // TODO: 炼化检查 (needRefine)
 
-        boolean ok = effect.apply(sp);
-        if (!ok) {
-            if (failMessageKey != null) sp.displayClientMessage(Component.translatable(failMessageKey), true);
+        GuEffectResult result = effect.apply(sp);
+        if (!result.success()) {
+            String key = result.overrideMessageKey() != null ? result.overrideMessageKey() : failMessageKey;
+            if (key != null) sp.displayClientMessage(Component.translatable(key), true);
             return InteractionResultHolder.fail(stack);
         }
 
-        if (successMessageKey != null) sp.displayClientMessage(Component.translatable(successMessageKey), true);
+        if (successMessageKey != null) {
+            sp.displayClientMessage(Component.translatable(successMessageKey, result.messageArgs()), true);
+        }
 
         if (guProps.getType() == GuType.ONE_TIME && !sp.getAbilities().instabuild) {
             stack.shrink(1);

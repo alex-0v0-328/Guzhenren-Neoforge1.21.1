@@ -209,5 +209,21 @@ public class ZhCnLanguageProvider extends LanguageProvider {
 
         add("item.guzhenren.hope_gu.use_success", "希望蛊已助你开窍。");
         add("item.guzhenren.hope_gu.use_failed", "你已开窍，无需此蛊。");
+
+        add("item.guzhenren.lifespan_gu", "寿蛊");
+        add("item.guzhenren.ten_years_lifespan_gu", "十年寿蛊");
+
+        add("item.guzhenren.lifespan_gu.use_success", "寿蛊为你增加了 %s 年寿元。");
+        add("item.guzhenren.ten_years_lifespan_gu.use_success", "十年寿蛊为你增加了 %s 年寿元。");
+
+        add("item.guzhenren.copper_relics_gu", "青铜舍利蛊");
+        add("item.guzhenren.steel_relics_gu", "黑铁舍利蛊");
+        add("item.guzhenren.silver_relics_gu", "白银舍利蛊");
+        add("item.guzhenren.gold_relics_gu", "黄金舍利蛊");
+        add("item.guzhenren.crystal_relics_gu", "紫金舍利蛊");
+
+        add("item.guzhenren.relics_gu.use_success", "舍利蛊提升了你的小境界至 %s。");
+        add("item.guzhenren.relics_gu.use_failed.rank_mismatch", "你的大境界与此蛊不匹配。");
+        add("item.guzhenren.relics_gu.use_failed.stage_peak", "已是小境界巅峰。");
     }
 }

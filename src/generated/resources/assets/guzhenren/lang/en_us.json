@@ -129,10 +129,22 @@
   "guzhenren.hud.talent": "Talent: %s",
   "guzhenren.itemGroup.gu_materials": "Gu Materials",
   "guzhenren.itemGroup.mortal_gu": "Mortal Gu",
+  "item.guzhenren.copper_relics_gu": "Green Copper Relics Gu",
+  "item.guzhenren.crystal_relics_gu": "Purple Crystal Relics Gu",
   "item.guzhenren.essence_stone": "Essence Stone",
   "item.guzhenren.essence_stone.use_failed.full": "Essence is already full.",
   "item.guzhenren.essence_stone.use_failed.not_awakened": "Awaken your aperture first.",
+  "item.guzhenren.gold_relics_gu": "Yellow Gold Relics Gu",
   "item.guzhenren.hope_gu": "Hope Gu",
   "item.guzhenren.hope_gu.use_failed": "You are already awakened.",
-  "item.guzhenren.hope_gu.use_success": "Hope Gu opened your aperture."
+  "item.guzhenren.hope_gu.use_success": "Hope Gu opened your aperture.",
+  "item.guzhenren.lifespan_gu": "Lifespan Gu",
+  "item.guzhenren.lifespan_gu.use_success": "Lifespan Gu extended your lifespan by %s years.",
+  "item.guzhenren.relics_gu.use_failed.rank_mismatch": "Your rank does not match this Gu.",
+  "item.guzhenren.relics_gu.use_failed.stage_peak": "You are already at peak stage.",
+  "item.guzhenren.relics_gu.use_success": "Relics Gu advanced your stage to %s.",
+  "item.guzhenren.silver_relics_gu": "White Silver Relics Gu",
+  "item.guzhenren.steel_relics_gu": "Red Steel Relics Gu",
+  "item.guzhenren.ten_years_lifespan_gu": "Ten-Years Lifespan Gu",
+  "item.guzhenren.ten_years_lifespan_gu.use_success": "Ten-Years Lifespan Gu extended your lifespan by %s years."
 }
