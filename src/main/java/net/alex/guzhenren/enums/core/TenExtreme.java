@@ -30,19 +30,14 @@ public enum TenExtreme implements StringRepresentable {
         this.talentPaths = List.of(talentPaths);
     }
 
-    public List<Path> getTalentPaths() {
-        return talentPaths;
-    }
+    public List<Path> getTalentPaths() { return talentPaths; }
 
     @Override
-    public @NotNull String getSerializedName() {
-        return name().toLowerCase();
-    }
+    public @NotNull String getSerializedName() { return name().toLowerCase(); }
 
-    public String getTranslationKey() {
-        return "guzhenren.enum.core.ten_extreme." + name().toLowerCase();
-    }
+    public String getTranslationKey() { return "guzhenren.enum.core.ten_extreme." + name().toLowerCase(); }
 
+    /** 随机一个非 NONE 的体质 */
     public static TenExtreme randomNonNone() {
         TenExtreme[] vals = values();
         TenExtreme t;

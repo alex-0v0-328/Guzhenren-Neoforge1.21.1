@@ -6,7 +6,9 @@ import org.jetbrains.annotations.NotNull;
 
 public enum GuType implements StringRepresentable {
 
+    /** 一次性: 使用后消耗 */
     ONE_TIME,
+    /** 多次使用: 通过耐久控制次数 */
     REUSABLE;
 
     public static final Codec<GuType> CODEC = StringRepresentable.fromEnum(GuType::values);

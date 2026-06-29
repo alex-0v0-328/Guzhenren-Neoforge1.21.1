@@ -34,11 +34,11 @@ public class PlayerCoreActions {
     //region AWAKEN
     public static void awaken(ServerPlayer player) {
         Talent t = Talent.randomNonNone();
-        doAwaken(player, t, Talent.randomMaxEssence(t));
+        doAwaken(player, t, Talent.randomPercent(t));
     }
 
     public static void awaken(ServerPlayer player, Talent talent) {
-        doAwaken(player, talent, Talent.randomMaxEssence(talent));
+        doAwaken(player, talent, Talent.randomPercent(talent));
     }
 
     public static void awaken(ServerPlayer player, Talent talent, int percent) {
@@ -110,7 +110,7 @@ public class PlayerCoreActions {
         ModPlayerData data = player.getData(ModAttachments.PLAYER_DATA.get());
         CoreComponent c = data.core();
         c.setPlayerTalent(talent);
-        c.setPlayerBaseEssence(Talent.randomMaxEssence(talent));
+        c.setPlayerBaseEssence(Talent.randomPercent(talent));
         if (talent == Talent.TEN_EXTREME) c.setPlayerExtremePhysique(TenExtreme.randomNonNone());
         recomputeMax(data);
     }

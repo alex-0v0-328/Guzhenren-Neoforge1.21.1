@@ -20,16 +20,10 @@ public enum Stage implements StringRepresentable {
         this.essenceMultiplier = essenceMultiplier;
     }
 
-    public int getEssenceMultiplier() {
-        return essenceMultiplier;
-    }
+    public int getEssenceMultiplier() { return essenceMultiplier; }
 
     @Override
-    public @NotNull String getSerializedName() {
-        return name().toLowerCase();
-    }
+    public @NotNull String getSerializedName() { return name().toLowerCase(); }
 
-    public String getTranslationKey() {
-        return "guzhenren.enum.core.stage." + name().toLowerCase();
-    }
+    public String getTranslationKey() { return "guzhenren.enum.core.stage." + name().toLowerCase(); }
 }

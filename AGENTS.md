@@ -1,130 +1,49 @@
-# AGENTS.md - Guzhenren (蛊真人)
+# AGENTS.md — Guzhenren (蛊真人)
 
-A Minecraft NeoForge 1.21.1 mod based on the cultivation novel *Reverend Insanity* (《蛊真人》).
+Minecraft NeoForge 1.21.1 mod. Gradle + ModDevGradle + Java 21.
 
-## Tech Stack
+## Build commands
 
-- **Minecraft** 1.21.1
-- **Mod Loader** NeoForge (21.1.233)
-- **Java** 21 (via `java.toolchain.languageVersion`)
-- **Build** Gradle with ModDevGradle 2.0.141
-- **Mappings** Parchment (2024.11.17)
-- **Serialization** Codec + StreamCodec (attachments and network)
-
-## Package Structure
-
+```bash
+./gradlew runData       # generate lang/item models into src/generated/resources/ — MUST run first or after adding items
+./gradlew runClient     # launch client for testing
+./gradlew build         # build the mod jar
+./gradlew runGameTestServer  # run game tests
 ```
-net.alex.guzhenren
-├── Guzhenren.java              # @Mod entry point (common side)
-├── GuzhenrenClient.java        # @Mod(dist=Dist.CLIENT) entry point
-├── client/                     # HUD, client events, client cache
-├── command/                    # /guzhenren subcommands
-├── datagen/                    # Lang + item model data generators
-├── enums/                      # Rank, Stage, Talent, TenExtreme, Path, Attainment
-├── event/                      # PlayerEvents, CommandEvents (server-side)
-├── gameplay/
-│   ├── action/                 # Actions that mutate player state
-│   └── data/                   # Data records: Core, Essence, Status, Path, ModPlayerData
-├── item/                       # Custom items (e.g. EssenceStoneItem)
-├── network/
-│   ├── ModPayloads.java        # Network packet registration (playToClient)
-│   └── sync/                   # Sync payloads (Core, Essence, Status, Path, Full)
-└── registry/                   # ModItems, ModAttachments, ModCreativeTabs
-```
+
+**`runData` is required before `runClient` or `build`** if you've added/modified items, damage types, or lang keys. Generated assets go to `src/generated/resources/` which is included in the source set but gitignored (except `.cache` files).
 
 ## Architecture
 
-### Data System (`gameplay/data/`)
+- **Single mod**, one source set. `mod_id = guzhenren`, group `net.alex.guzhenren`.
+- **Entrypoint**: `Guzhenren.java` — `@Mod(Guzhenren.MOD_ID)` constructor registers attachments, items, creative tabs on the mod event bus.
+- **Client**:
+  - `GuzhenrenClient.java` — `@Mod(..., dist = Dist.CLIENT)` constructor, currently empty (placeholder for future config screens).
+  - `event/ClientEvents.java` — `@EventBusSubscriber(Dist.CLIENT)` registers HUD overlay (`PlayerStatsHud`) via `RegisterGuiLayersEvent`.
+  - `network/ModPayloads.java` — `@EventBusSubscriber` registers all play-to-client payload handlers. Handlers dispatch to static methods in `client/ClientPayloadHandlers.java`.
+  - `client/ClientPlayerData.java` — static fields mirroring server-side `ModPlayerData` components (Core, Essence, Status, Path, Lifespan, Soul). Payload handlers write into these.
+- **Registries**: `registry/` — `DeferredRegister` pattern for attachments, items, creative tabs. Damage types use `ResourceKey` directly (no DeferredRegister), generated via datagen.
+- **Events**: `event/` — `@EventBusSubscriber` auto-registered handlers:
+  - `ModPlayerEvents` — server tick (natural essence recovery, aging, death checks, throttled sync), login/respawn/clone/wake-up events.
+  - `ModCommandEvents` — registers `/guzhenren` command dispatcher.
+- **Player data**: `gameplay/data/ModPlayerData.java` — single `DataAttachment<ModPlayerData>` using codec serialization. Sub-components: CoreComponent, EssenceComponent, StatusComponent, PathComponent, LifespanComponent, SoulComponent (all codec-serializable, with dirty flags for sync).
+- **Commands**: `command/ModCommands.java` — root `/guzhenren` (permission level 2), subcommands: awaken, info, rank, stage, talent, base, essence, physique, path, reset, lifespan, soul.
+- **Gameplay actions**: `gameplay/action/` — pure logic classes (`PlayerCoreActions`, `PlayerEssenceActions`, `PlayerLifespanActions`, `PlayerPathActions`, `PlayerSoulActions`) that mutate `ModPlayerData` via `player.getData(ATTACHMENT)`.
+- **Network sync**: `network/sync/` — 8 payload types (ModPlayerSyncPayload full, + per-component: Core/Essence/Status/Path/PathDelta/Lifespan/Soul). All use `CustomPacketPayload` + `StreamCodec`. Two sync strategies:
+  - Immediate (dirty flag): Status, Essence/Lifespan/Soul action changes.
+  - Throttled (every 20 ticks): Core, Path, Essence natural recovery.
+- **Data generation**: `datagen/DataGenerators.java` — auto-registered via `@EventBusSubscriber`, generates lang (en_us, zh_cn), item models, damage types, damage type tags.
+- **Enums**: `enums/` — core (Rank, Stage, Talent, TenExtreme, SoulLevel), path (Path, Attainment), gu (GuType).
+- **Gu system**: `item/gu/` — `GuItem` (extends Item, has `GuProperties` + `GuEffect`), `GuProperties` (path, rank, type, feed/refine config), `GuEffect` functional interface, `GuEffectResult` record. Effects use lambda factories in `GuEffects.java`.
+- **Mixins**: declared in `guzhenren.mixins.json` but currently empty (no mixin classes yet).
 
-All player data lives in a single `ModPlayerData` record attached via NeoForge `AttachmentType`. Sub-components:
+## Project-specific quirks
 
-| Record | Fields | Purpose |
-|--------|--------|---------|
-| `CoreComponent` | rank, stage, talent, extremePhysique, baseEssence | Cultivation core |
-| `EssenceComponent` | currentEssence, maxEssence | True essence pool |
-| `StatusComponent` | apertureAwakened | Whether player has awakened |
-| `PathComponent` | Map<Path, Attainment> + Map<Path, Long> | 25 paths × attainment + dao marks |
-
-- Each component implements `Codec` for NBT persistence.
-- `ModPlayerData.CODEC` is used by `AttachmentType.builder().serialize(...)`.
-- Dirty tracking: `core.clearDirty()` / `status.clearDirty()` / `path.clearDirty()` is called after copying to prevent redundant sync.
-
-### Network Sync (`network/`)
-
-Payloads are registered in `ModPayloads.java` via `@EventBusSubscriber`. All sync is `playToClient` — the server pushes state to clients. Each component has its own payload (`CoreSyncPayload`, `EssenceSyncPayload`, `StatusSyncPayload`, `PathSyncPayload`) plus a full `ModPlayerSyncPayload` for bulk sync.
-
-### Commands (`command/`)
-
-All commands are under `/guzhenren` (permission level 2). Subcommands:
-- `awaken`, `rank`, `stage`, `talent`, `base`, `physique` → `CoreCommands`
-- `essence` → `EssenceCommands`
-- `path` → `PathCommands`
-- `info` → `ModCommands`
-- `reset` → `ModCommands`
-
-### Enums (`enums/`)
-
-- `Rank`: MORTAL ~ FIVE (一转~五转)
-- `Stage`: EARLY, MIDDLE, ADVANCED, PEAK (初/中/高/巅峰)
-- `Talent`: levels from A~D plus 十绝体-related
-- `TenExtreme`: 十绝体 types
-- `Path`: 25 cultivation paths
-- `Attainment`: 9 attainment levels per path
-
-All enums implement `StringRepresentable` for codec compatibility and have `getTranslationKey()` for i18n.
-
-### Registries (`registry/`)
-
-Pattern: Each registry class has a `public static void register(IEventBus modEventBus)` method. Registries are called from `Guzhenren` constructor.
-
-- `ModItems`: Uses `DeferredRegister.Items`, registers custom items.
-- `ModAttachments`: Uses `DeferredRegister<AttachmentType<?>>`, registers `ModPlayerData` attachment.
-- `ModCreativeTabs`: Creative mode tab registration.
-
-### Client (`client/`)
-
-- `ClientPayloadHandlers`: Handles all incoming sync payloads, updates `ClientPlayerData` cache.
-- `ClientPlayerData`: Client-side singleton cache for current player's data.
-- `PlayerStatsHud`: Renders cultivation info HUD overlay.
-- `ClientEvents`: Handles client tick, login, etc.
-
-## Code Conventions
-
-1. **No comments by default** — follow existing style; code should be self-documenting.
-2. **No emojis** in code or logs.
-3. **Chinese comments** are acceptable where they exist (the mod is based on Chinese source material).
-4. Use **records** for data classes, **enums** for enumerations implementing `StringRepresentable`.
-5. Registration pattern: `DeferredRegister` fields → `register(IEventBus)` static method.
-6. Translation keys use the namespace `guzhenren.*` (e.g. `guzhenren.enum.core.rank.mortal`).
-7. `PlayerCoreActions`, `PlayerEssenceActions`, `PlayerPathActions` are the only classes that mutate player state — all mutations go through them.
-8. Component fields are mutable (`set*` methods) but accessed through the record wrapper.
-9. `requireAwakened()` helper in `ModCommands` is shared by subcommand builders.
-
-## Build Commands
-
-```bash
-./gradlew runData       # Run data generators (lang files, item models)
-./gradlew runClient     # Launch client for testing
-./gradlew runServer     # Launch dedicated server
-./gradlew build         # Build the mod JAR
-./gradlew check         # Run tests (if any)
-```
-
-## Key Files
-
-| File | Purpose |
-|------|---------|
-| `gradle.properties` | All mod metadata (mod_id, version, group, Neo version) |
-| `build.gradle` | NeoForge MDG build configuration |
-| `src/main/resources/guzhenren.mixins.json` | Mixin config (currently empty) |
-| `src/generated/resources/` | Auto-generated lang files and item models |
-
-## Adding a New Feature
-
-1. Define data fields in the appropriate `*Component` record.
-2. Add serialization (update `Codec` in the component).
-3. Create a new `*SyncPayload` if needed, register in `ModPayloads`.
-4. Add handler in `ClientPayloadHandlers`.
-5. Add mutation methods in the appropriate `*Actions` class.
-6. Add command in the appropriate `*Commands` class.
-7. Run `./gradlew runData` to regenerate language entries if new translation keys were added.
+- **`neoforge.mods.toml` is a template** in `src/main/templates/META-INF/`. Variables (`${mod_id}`, `${mod_version}`, etc.) are expanded from `gradle.properties` by the `generateModMetadata` task. Never edit generated output directly.
+- **Parchment mappings** are used (version in `gradle.properties`). Parameter names in Minecraft classes are human-readable.
+- **Gradle configuration cache** is enabled (`org.gradle.configuration-cache=true`). If builds behave oddly, `./gradlew --stop && rm -rf .gradle/configuration-cache`.
+- **BlockBench `.bbmodel` files** in resources are excluded from the final jar (`build.gradle` sourceSet config).
+- **Generated JSON line endings**: `.gitattributes` enforces LF for `src/generated/**/*.json` to avoid git churn from datagen on Windows.
+- **Wrapper distribution**: BIN (not ALL). If you switch to ALL for IDE javadoc support, run the wrapper task twice afterwards.
+- **No CI** configured currently. **No formatter/linter** configured. **No `src/test/`** directory.
+- Game tests are enabled in all run configs via `neoforge.enabledGameTestNamespaces = guzhenren`.

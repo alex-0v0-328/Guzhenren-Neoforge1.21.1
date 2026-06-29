@@ -42,9 +42,9 @@ public class CoreCommands {
             return 0;
         }
         if (percent >= 0) {
-            if (percent < talent.getMinEssence() || percent > talent.getMaxEssence()) {
+            if (percent < talent.getMinPercent() || percent > talent.getMaxPercent()) {
                 src.sendFailure(Component.translatable("guzhenren.command.error.percent_out_of_range",
-                        talent.getMinEssence(), talent.getMaxEssence()));
+                        talent.getMinPercent(), talent.getMaxPercent()));
                 return 0;
             }
             PlayerCoreActions.awaken(player, talent, percent);

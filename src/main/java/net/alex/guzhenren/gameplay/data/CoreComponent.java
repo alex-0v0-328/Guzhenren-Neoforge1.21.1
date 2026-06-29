@@ -89,7 +89,7 @@ public class CoreComponent {
     public void setPlayerBaseEssence(int value) {
         int clamped = Math.clamp(value, 0, 100);
         this.playerBaseEssence = clamped;
-        Talent inferred = Talent.fromEssenceMax(clamped);
+        Talent inferred = Talent.fromPercent(clamped);
         if (inferred != this.playerTalent) {
             this.playerTalent = inferred;
             if (this.playerTalent != Talent.TEN_EXTREME) {

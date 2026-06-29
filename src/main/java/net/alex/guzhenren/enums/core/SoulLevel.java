@@ -31,7 +31,7 @@ public enum SoulLevel implements StringRepresentable {
 
     public String getTranslationKey() { return "guzhenren.enum.core.soul_level." + name().toLowerCase(); }
 
-    /** 向下取整返回 soul 对应的最高 level. 任意 soul >= 0 都返回 ONE_PERSON 或以上 */
+    /** 向下取整返回 soul 对应的最高 level. 任意 soul 都返回 ONE_PERSON 或以上 */
     public static SoulLevel fromSoulValue(long soul) {
         SoulLevel result = ONE_PERSON;
         for (SoulLevel level : values()) {

@@ -16,43 +16,37 @@ public enum Talent implements StringRepresentable {
 
     public static final Codec<Talent> CODEC = StringRepresentable.fromEnum(Talent::values);
 
-    private final int minEssence;
-    private final int maxEssence;
+    private final int minPercent;
+    private final int maxPercent;
 
-    Talent(int minEssence, int maxEssence) {
-        this.minEssence = minEssence;
-        this.maxEssence = maxEssence;
+    Talent(int minPercent, int maxPercent) {
+        this.minPercent = minPercent;
+        this.maxPercent = maxPercent;
     }
 
-    public int getMinEssence() {
-        return minEssence;
-    }
-
-    public int getMaxEssence() {
-        return maxEssence;
-    }
+    public int getMinPercent() { return minPercent; }
+    public int getMaxPercent() { return maxPercent; }
 
     @Override
-    public @NotNull String getSerializedName() {
-        return name().toLowerCase();
+    public @NotNull String getSerializedName() { return name().toLowerCase(); }
+
+    public String getTranslationKey() { return "guzhenren.enum.core.talent." + name().toLowerCase(); }
+
+    /** 在 talent 区间内 roll 一个百分比 (0-100) */
+    public static int randomPercent(Talent talent) {
+        if (talent.minPercent == talent.maxPercent) return talent.minPercent;
+        return ThreadLocalRandom.current().nextInt(talent.minPercent, talent.maxPercent + 1);
     }
 
-    public String getTranslationKey() {
-        return "guzhenren.enum.core.talent." + name().toLowerCase();
-    }
-
-    public static int randomMaxEssence(Talent talent) {
-        if (talent.minEssence == talent.maxEssence) return talent.minEssence;
-        return ThreadLocalRandom.current().nextInt(talent.minEssence, talent.maxEssence + 1);
-    }
-
-    public static Talent fromEssenceMax(int essenceMax) {
+    /** 根据百分比反查所属 talent tier. 无匹配时返回 NONE */
+    public static Talent fromPercent(int percent) {
         for (Talent t : values()) {
-            if (essenceMax >= t.minEssence && essenceMax <= t.maxEssence) return t;
+            if (percent >= t.minPercent && percent <= t.maxPercent) return t;
         }
         return NONE;
     }
 
+    /** 随机一个非 NONE 的 talent */
     public static Talent randomNonNone() {
         Talent[] vals = values();
         Talent t;

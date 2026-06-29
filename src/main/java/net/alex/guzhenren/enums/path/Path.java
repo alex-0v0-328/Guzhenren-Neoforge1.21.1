@@ -4,6 +4,11 @@ import com.mojang.serialization.Codec;
 import net.minecraft.util.StringRepresentable;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * 流派 (Path) — 26 个流派
+ * 每个 path 玩家可独立修炼 attainment 境界 + 累计 marks 道痕
+ * 编号顺序按 Reverend Insanity 小说创作时间, 非严格分类; 空行分组仅为视觉
+ */
 public enum Path implements StringRepresentable {
 
     HEAVEN, RULE, SPACE, TIME, HUMAN,

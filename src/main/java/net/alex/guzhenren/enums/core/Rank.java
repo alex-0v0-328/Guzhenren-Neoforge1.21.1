@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
 
 public enum Rank implements StringRepresentable {
 
+    // 凡人无真元
     MORTAL(0, 0L),
     ONE(1, 100L),
     TWO(2, 1_000L),
@@ -23,20 +24,11 @@ public enum Rank implements StringRepresentable {
         this.essenceBase = essenceBase;
     }
 
-    public int getRankNum() {
-        return rankNum;
-    }
-
-    public long getEssenceBase() {
-        return essenceBase;
-    }
+    public int getRankNum() { return rankNum; }
+    public long getEssenceBase() { return essenceBase; }
 
     @Override
-    public @NotNull String getSerializedName() {
-        return name().toLowerCase();
-    }
+    public @NotNull String getSerializedName() { return name().toLowerCase(); }
 
-    public String getTranslationKey() {
-        return "guzhenren.enum.core.rank." + name().toLowerCase();
-    }
+    public String getTranslationKey() { return "guzhenren.enum.core.rank." + name().toLowerCase(); }
 }
