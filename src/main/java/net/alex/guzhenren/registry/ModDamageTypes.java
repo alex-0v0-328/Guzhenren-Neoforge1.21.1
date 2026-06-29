@@ -20,5 +20,7 @@ public class ModDamageTypes {
         return level.damageSources().source(LIFESPAN_DEPLETED);
     }
 
-    public static DamageSource soulCollapsed(ServerLevel level) { return level.damageSources().source(SOUL_COLLAPSED); }
+    public static DamageSource soulCollapsed(ServerLevel level) {
+        return level.damageSources().source(SOUL_COLLAPSED);
+    }
 }

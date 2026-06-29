@@ -145,6 +145,5 @@
   "item.guzhenren.relics_gu.use_success": "Relics Gu advanced your stage to %s.",
   "item.guzhenren.silver_relics_gu": "White Silver Relics Gu",
   "item.guzhenren.steel_relics_gu": "Red Steel Relics Gu",
-  "item.guzhenren.ten_years_lifespan_gu": "Ten-Years Lifespan Gu",
-  "item.guzhenren.ten_years_lifespan_gu.use_success": "Ten-Years Lifespan Gu extended your lifespan by %s years."
+  "item.guzhenren.ten_years_lifespan_gu": "Ten-Years Lifespan Gu"
 }

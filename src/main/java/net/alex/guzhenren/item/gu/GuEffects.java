@@ -18,17 +18,17 @@ public class GuEffects {
         return GuEffectResult.succeed();
     };
 
-    public static final GuEffect ADD_LIFESPAN_1_9 = player -> {
-        int years = ThreadLocalRandom.current().nextInt(1, 10);
-        PlayerLifespanActions.addMaxLifespan(player, years);
-        return GuEffectResult.succeed(years);
-    };
-
-    public static final GuEffect ADD_LIFESPAN_10_99 = player -> {
-        int years = ThreadLocalRandom.current().nextInt(10, 100);
-        PlayerLifespanActions.addMaxLifespan(player, years);
-        return GuEffectResult.succeed(years);
-    };
+    /**
+     * 增加寿元 factory: 随机 [minYears, maxYears] (闭区间)
+     * 用于寿蛊系列, message arg 为 roll 出的年数
+     */
+    public static GuEffect addLifespan(int minYears, int maxYears) {
+        return player -> {
+            int years = ThreadLocalRandom.current().nextInt(minYears, maxYears + 1);
+            PlayerLifespanActions.addMaxLifespan(player, years);
+            return GuEffectResult.succeed(years);
+        };
+    }
 
     /**
      * 提升 stage 修为. 蛊虫 rank 必须等于玩家 rank, 且玩家未达 PEAK

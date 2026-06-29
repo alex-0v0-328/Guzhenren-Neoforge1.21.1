@@ -145,6 +145,5 @@
   "item.guzhenren.relics_gu.use_success": "舍利蛊提升了你的小境界至 %s。",
   "item.guzhenren.silver_relics_gu": "白银舍利蛊",
   "item.guzhenren.steel_relics_gu": "黑铁舍利蛊",
-  "item.guzhenren.ten_years_lifespan_gu": "十年寿蛊",
-  "item.guzhenren.ten_years_lifespan_gu.use_success": "十年寿蛊为你增加了 %s 年寿元。"
+  "item.guzhenren.ten_years_lifespan_gu": "十年寿蛊"
 }

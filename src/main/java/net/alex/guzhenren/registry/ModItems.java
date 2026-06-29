@@ -30,13 +30,8 @@ public class ModItems {
 //endregion
 
     //region MORTAL GU - HEAVEN PATH (LIFESPAN)
-    public static final DeferredItem<GuItem> LIFESPAN_GU =
-            registerMortalGu("lifespan_gu", Path.HEAVEN, Rank.ONE, GuEffects.ADD_LIFESPAN_1_9,
-                    "lifespan_gu.use_success", null);
-
-    public static final DeferredItem<GuItem> TEN_YEARS_LIFESPAN_GU =
-            registerMortalGu("ten_years_lifespan_gu", Path.HEAVEN, Rank.ONE, GuEffects.ADD_LIFESPAN_10_99,
-                    "ten_years_lifespan_gu.use_success", null);
+    public static final DeferredItem<GuItem> LIFESPAN_GU           = registerLifespanGu("lifespan_gu",            1,  9);
+    public static final DeferredItem<GuItem> TEN_YEARS_LIFESPAN_GU = registerLifespanGu("ten_years_lifespan_gu", 10, 99);
 //endregion
 
     //region MORTAL GU - HEAVEN PATH (RELICS)
@@ -52,6 +47,7 @@ public class ModItems {
     }
 
 //region HELPERS
+    /** 注册一只通用一次性凡蛊 */
     private static DeferredItem<GuItem> registerMortalGu(
             String id, Path path, Rank rank, GuEffect effect, String successSuffix, String failSuffix) {
         return ITEMS.register(id, () -> new GuItem(
@@ -63,6 +59,17 @@ public class ModItems {
         ));
     }
 
+    /**
+     * 注册一只寿蛊 (天道一转, addLifespan effect, 共用 lifespan_gu.use_success message)
+     * @param minYears 增寿年数下限 (闭区间)
+     * @param maxYears 增寿年数上限 (闭区间)
+     */
+    private static DeferredItem<GuItem> registerLifespanGu(String id, int minYears, int maxYears) {
+        return registerMortalGu(id, Path.HEAVEN, Rank.ONE, GuEffects.addLifespan(minYears, maxYears),
+                "lifespan_gu.use_success", null);
+    }
+
+    /** 注册一只舍利蛊 (天道凡蛊, advanceStage effect, 共用 relics_gu.use_success message) */
     private static DeferredItem<GuItem> registerRelicsGu(String id, Rank rank) {
         return registerMortalGu(id, Path.HEAVEN, rank, GuEffects.advanceStage(rank),
                 "relics_gu.use_success", null);
