@@ -62,9 +62,6 @@ public class CoreComponent {
 
     public void setPlayerTalent(Talent talent) {
         this.playerTalent = talent;
-        if (talent != Talent.TEN_EXTREME) {
-            this.playerExtremePhysique = TenExtreme.NONE;
-        }
         this.dirty = true;
     }
 
@@ -74,15 +71,7 @@ public class CoreComponent {
     }
 
     public void setPlayerBaseEssence(int value) {
-        int clamped = Math.clamp(value, 0, 100);
-        this.playerBaseEssence = clamped;
-        Talent inferred = Talent.fromPercent(clamped);
-        if (inferred != this.playerTalent) {
-            this.playerTalent = inferred;
-            if (this.playerTalent != Talent.TEN_EXTREME) {
-                this.playerExtremePhysique = TenExtreme.NONE;
-            }
-        }
+        this.playerBaseEssence = Math.clamp(value, 0, 100);
         this.dirty = true;
     }
 //endregion

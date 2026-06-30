@@ -113,21 +113,25 @@ public final class PlayerCoreActions {
         ModPlayerData data = ModPlayerData.of(player);
         CoreComponent c = data.core();
         c.setPlayerTalent(talent);
+        c.setPlayerExtremePhysique(talent == Talent.TEN_EXTREME ? TenExtreme.randomNonNone() : TenExtreme.NONE);
         c.setPlayerBaseEssence(Talent.randomPercent(talent));
-        if (talent == Talent.TEN_EXTREME) c.setPlayerExtremePhysique(TenExtreme.randomNonNone());
         recomputeMax(data);
     }
 
     public static void addBaseEssence(ServerPlayer player, int amount) {
         ModPlayerData data = ModPlayerData.of(player);
-        data.core().addPlayerBaseEssence(amount);
+        CoreComponent c = data.core();
+        c.addPlayerBaseEssence(amount);
+        syncTalentFromBaseEssence(c);
         ensurePhysiqueIfTenExtreme(data);
         recomputeMax(data);
     }
 
     public static void subBaseEssence(ServerPlayer player, int amount) {
         ModPlayerData data = ModPlayerData.of(player);
-        data.core().subPlayerBaseEssence(amount);
+        CoreComponent c = data.core();
+        c.subPlayerBaseEssence(amount);
+        syncTalentFromBaseEssence(c);
         ensurePhysiqueIfTenExtreme(data);
         recomputeMax(data);
     }
@@ -143,15 +147,9 @@ public final class PlayerCoreActions {
 //endregion
 
 //region RESET
-    /** 全部数据重置. 委托给各 component 的 reset() */
+    /** 全部数据重置. 委托给 ModPlayerData.reset() */
     public static void reset(ServerPlayer player) {
-        ModPlayerData data = ModPlayerData.of(player);
-        data.core().reset();
-        data.essence().reset();
-        data.status().reset();
-        data.path().reset();
-        data.lifespan().reset();
-        data.soul().reset();
+        ModPlayerData.of(player).reset();
     }
 //endregion
 
@@ -162,6 +160,14 @@ public final class PlayerCoreActions {
                 data.core().getPlayerRank(),
                 data.core().getPlayerStage()
         );
+    }
+
+    /** 根据 baseEssence 反查 talent. 若 talent 变化则同步 + 清 physique (若非 TEN_EXTREME) */
+    private static void syncTalentFromBaseEssence(CoreComponent c) {
+        Talent inferred = Talent.fromPercent(c.getPlayerBaseEssence());
+        if (inferred == c.getPlayerTalent()) return;
+        c.setPlayerTalent(inferred);
+        if (inferred != Talent.TEN_EXTREME) c.setPlayerExtremePhysique(TenExtreme.NONE);
     }
 
     private static void ensurePhysiqueIfTenExtreme(ModPlayerData data) {

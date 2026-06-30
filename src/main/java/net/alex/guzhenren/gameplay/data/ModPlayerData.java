@@ -23,13 +23,14 @@ public record ModPlayerData(CoreComponent core, EssenceComponent essence, Status
                 new PathComponent(), new LifespanComponent(), new SoulComponent());
     }
 
-    /** 静态入口: 从 ServerPlayer 获取 attachment 数据. 替代 player.getData(ModAttachments.PLAYER_DATA.get()) 模板 */
+    /** 静态入口: 从 ServerPlayer 获取 attachment 数据 */
     public static ModPlayerData of(ServerPlayer player) {
         return player.getData(ModAttachments.PLAYER_DATA.get());
     }
 
     /**
-     * 把 src 的所有状态复制到当前实例, 用于 PlayerEvent.Clone 死亡 keepInventory 场景.
+     * 把 src 的所有状态复制到当前实例.
+     * 用于 PlayerEvent.Clone 死亡 keepInventory 场景 / 维度切换.
      * 完成后清掉所有 component 的 dirty 标记 (由 respawn 触发的 full sync 接管).
      */
     public void copyFrom(ModPlayerData src) {
@@ -59,11 +60,25 @@ public record ModPlayerData(CoreComponent core, EssenceComponent essence, Status
 
         this.soul.setSoul(src.soul.getSoul());
 
-        this.core.clearDirty();
-        this.essence.clearDirty();
-        this.status.clearDirty();
-        this.path.clearDirty();
-        this.lifespan.clearDirty();
-        this.soul.clearDirty();
+        clearAllDirty();
+    }
+
+    /** 重置所有 component 到初始状态. Step 2 #3 引入 */
+    public void reset() {
+        core.reset();
+        essence.reset();
+        status.reset();
+        path.reset();
+        lifespan.reset();
+        soul.reset();
+    }
+
+    private void clearAllDirty() {
+        core.clearDirty();
+        essence.clearDirty();
+        status.clearDirty();
+        path.clearDirty();
+        lifespan.clearDirty();
+        soul.clearDirty();
     }
 }
