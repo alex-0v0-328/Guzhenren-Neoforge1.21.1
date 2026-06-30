@@ -124,6 +124,7 @@
   "guzhenren.enum.path.path.wood": "木道",
   "guzhenren.gu.tooltip.category.mortal": "凡蛊",
   "guzhenren.gu.tooltip.line": "%s%s%s",
+  "guzhenren.hud.essence": "%s / %s",
   "guzhenren.hud.lifespan": "年龄：%s 岁 | 寿元：%s 年",
   "guzhenren.hud.soul": "魂魄：%s（%s）",
   "guzhenren.hud.talent": "资质：%s",

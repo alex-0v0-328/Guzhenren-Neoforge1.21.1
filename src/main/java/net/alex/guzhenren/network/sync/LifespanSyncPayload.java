@@ -9,6 +9,7 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
+/** Server → Client: 同步寿元 (maxLifespan + age + tickInCurrentYear) */
 public record LifespanSyncPayload(LifespanComponent data) implements CustomPacketPayload {
 
     public static final CustomPacketPayload.Type<LifespanSyncPayload> TYPE =

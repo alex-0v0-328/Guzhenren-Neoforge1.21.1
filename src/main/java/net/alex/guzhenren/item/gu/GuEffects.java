@@ -12,7 +12,7 @@ import net.minecraft.network.chat.Component;
 public class GuEffects {
 
     public static final GuEffect AWAKEN = player -> {
-        ModPlayerData data = player.getData(ModAttachments.PLAYER_DATA.get());
+        ModPlayerData data = ModPlayerData.of(player);
         if (!PlayerCoreActions.canAwaken(data)) return GuEffectResult.fail();
         PlayerCoreActions.awaken(player);
         return GuEffectResult.succeed();
@@ -35,12 +35,9 @@ public class GuEffects {
      */
     public static GuEffect advanceStage(Rank requiredRank) {
         return player -> {
-            ModPlayerData data = player.getData(ModAttachments.PLAYER_DATA.get());
+            ModPlayerData data = ModPlayerData.of(player);
             if (data.core().getPlayerRank() != requiredRank) {
                 return GuEffectResult.fail("item.guzhenren.relics_gu.use_failed.rank_mismatch");
-            }
-            if (data.core().getPlayerStage() == Stage.PEAK) {
-                return GuEffectResult.fail("item.guzhenren.relics_gu.use_failed.stage_peak");
             }
             if (!PlayerCoreActions.stageUp(player)) {
                 return GuEffectResult.fail("item.guzhenren.relics_gu.use_failed.stage_peak");

@@ -6,8 +6,11 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 
+/** 命令注册事件 handler */
 @EventBusSubscriber(modid = Guzhenren.MOD_ID)
-public class ModCommandEvents {
+public final class ModCommandEvents {
+
+    private ModCommandEvents() {}
 
     @SubscribeEvent
     public static void onRegisterCommands(RegisterCommandsEvent event) {

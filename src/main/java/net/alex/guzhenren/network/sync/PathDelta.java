@@ -5,6 +5,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.alex.guzhenren.enums.path.Attainment;
 import net.alex.guzhenren.enums.path.Path;
 
+/** 单 path 的 delta 数据 (用于 PathDeltaSyncPayload 增量同步) */
 public record PathDelta(Path path, Attainment attainment, long marks) {
 
     public static final Codec<PathDelta> CODEC = RecordCodecBuilder.create(i -> i.group(

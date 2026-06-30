@@ -10,9 +10,12 @@ import net.alex.guzhenren.network.sync.SoulSyncPayload;
 import net.alex.guzhenren.network.sync.StatusSyncPayload;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
-public class ClientPayloadHandlers {
+/** 客户端 payload handler: 接收 server 端 sync, 写入 ClientPlayerData */
+public final class ClientPayloadHandlers {
 
-    public static void handleFullSync(ModPlayerSyncPayload payload, IPayloadContext ctx) {
+    private ClientPayloadHandlers() {}
+
+    public static void handlePlayerFull(ModPlayerSyncPayload payload, IPayloadContext ctx) {
         ctx.enqueueWork(() -> ClientPlayerData.setAll(payload.data()));
     }
 

@@ -11,6 +11,7 @@ import net.alex.guzhenren.enums.path.Path;
 import net.minecraft.data.PackOutput;
 import net.neoforged.neoforge.common.data.LanguageProvider;
 
+/** 中文 (zh_cn) 语言文件 provider */
 public class ZhCnLanguageProvider extends LanguageProvider {
 
     public ZhCnLanguageProvider(PackOutput output) {
@@ -29,7 +30,7 @@ public class ZhCnLanguageProvider extends LanguageProvider {
         addDeathMessageKeys();
     }
 
-    //region ENUM
+//region ENUM
     private void addEnumKeys() {
         addRank();
         addStage();
@@ -137,22 +138,23 @@ public class ZhCnLanguageProvider extends LanguageProvider {
     }
 //endregion
 
-    //region HUD
+//region HUD
     private void addHudKeys() {
         add("guzhenren.hud.talent",   "资质：%s");
+        add("guzhenren.hud.essence",  "%s / %s");
         add("guzhenren.hud.lifespan", "年龄：%s 岁 | 寿元：%s 年");
         add("guzhenren.hud.soul",     "魂魄：%s（%s）");
     }
 //endregion
 
-    //region CREATIVE TAB
+//region CREATIVE TAB
     private void addCreativeTabKeys() {
         add("guzhenren.itemGroup.gu_materials", "蛊材");
         add("guzhenren.itemGroup.mortal_gu",    "凡蛊");
     }
 //endregion
 
-    //region ITEM
+//region ITEM
     private void addItemKeys() {
         add("item.guzhenren.essence_stone",         "元石");
         add("item.guzhenren.hope_gu",               "希望蛊");
@@ -185,7 +187,7 @@ public class ZhCnLanguageProvider extends LanguageProvider {
     }
 //endregion
 
-    //region COMMAND
+//region COMMAND
     private void addCommandKeys() {
         addCommandSuccessKeys();
         addCommandErrorKeys();
@@ -254,7 +256,7 @@ public class ZhCnLanguageProvider extends LanguageProvider {
     }
 //endregion
 
-    //region DEATH MESSAGE
+//region DEATH MESSAGE
     private void addDeathMessageKeys() {
         add("death.attack.lifespan_depleted", "%1$s 寿元已尽而亡");
         add("death.attack.soul_collapsed",    "%1$s 魂魄衰竭而亡");

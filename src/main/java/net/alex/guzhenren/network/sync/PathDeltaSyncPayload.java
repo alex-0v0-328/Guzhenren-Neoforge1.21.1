@@ -9,6 +9,7 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
+/** Server → Client: 同步 path 增量变化 (仅 dirty paths) */
 public record PathDeltaSyncPayload(List<PathDelta> deltas) implements CustomPacketPayload {
 
     public static final CustomPacketPayload.Type<PathDeltaSyncPayload> TYPE =

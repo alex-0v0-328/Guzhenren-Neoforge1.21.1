@@ -32,6 +32,7 @@ public class CoreComponent {
         this.playerBaseEssence = 0;
     }
 
+    /** Codec 反序列化专用. 外部代码请用无参构造 + setter */
     public CoreComponent(Rank rank, Stage stage, Talent talent, TenExtreme physique, int baseEssence) {
         this.playerRank = rank;
         this.playerStage = stage;
@@ -40,29 +41,15 @@ public class CoreComponent {
         this.playerBaseEssence = baseEssence;
     }
 
-    //region GETTER
-    public Rank getPlayerRank() {
-        return playerRank;
-    }
-
-    public Stage getPlayerStage() {
-        return playerStage;
-    }
-
-    public Talent getPlayerTalent() {
-        return playerTalent;
-    }
-
-    public TenExtreme getPlayerExtremePhysique() {
-        return playerExtremePhysique;
-    }
-
-    public int getPlayerBaseEssence() {
-        return playerBaseEssence;
-    }
+//region GETTER
+    public Rank getPlayerRank() { return playerRank; }
+    public Stage getPlayerStage() { return playerStage; }
+    public Talent getPlayerTalent() { return playerTalent; }
+    public TenExtreme getPlayerExtremePhysique() { return playerExtremePhysique; }
+    public int getPlayerBaseEssence() { return playerBaseEssence; }
 //endregion
 
-    //region SETTER
+//region SETTER
     public void setPlayerRank(Rank rank) {
         this.playerRank = rank;
         this.dirty = true;
@@ -100,7 +87,7 @@ public class CoreComponent {
     }
 //endregion
 
-    //region BASE ESSENCE
+//region BASE ESSENCE
     public void addPlayerBaseEssence(int amount) {
         if (amount <= 0) return;
         setPlayerBaseEssence(this.playerBaseEssence + amount);
@@ -112,13 +99,20 @@ public class CoreComponent {
     }
 //endregion
 
-    //region DIRTY
-    public boolean isDirty() {
-        return dirty;
+//region RESET
+    /** 重置到初始状态 (未开窍凡人) */
+    public void reset() {
+        this.playerRank = Rank.MORTAL;
+        this.playerStage = Stage.NONE;
+        this.playerTalent = Talent.NONE;
+        this.playerExtremePhysique = TenExtreme.NONE;
+        this.playerBaseEssence = 0;
+        this.dirty = true;
     }
+//endregion
 
-    public void clearDirty() {
-        this.dirty = false;
-    }
+//region DIRTY
+    public boolean isDirty() { return dirty; }
+    public void clearDirty() { this.dirty = false; }
 //endregion
 }

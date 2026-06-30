@@ -9,6 +9,7 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
+/** Server → Client: 同步真元 (maxEssence + currentEssence) */
 public record EssenceSyncPayload(EssenceComponent data) implements CustomPacketPayload {
 
     public static final CustomPacketPayload.Type<EssenceSyncPayload> TYPE =

@@ -2,6 +2,8 @@ package net.alex.guzhenren.item.gu;
 
 import net.minecraft.server.level.ServerPlayer;
 
+/** 蛊虫使用效果. functional interface, 实现 apply 方法返回效果结果 */
+@FunctionalInterface
 public interface GuEffect {
 
     /**

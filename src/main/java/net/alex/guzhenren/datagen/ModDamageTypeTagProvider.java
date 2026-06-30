@@ -10,6 +10,7 @@ import net.minecraft.tags.DamageTypeTags;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import org.jetbrains.annotations.NotNull;
 
+/** 注册自定义 DamageType 的 tag (bypass armor / effects / enchantments / no knockback) */
 public class ModDamageTypeTagProvider extends DamageTypeTagsProvider {
 
     public ModDamageTypeTagProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> registries,

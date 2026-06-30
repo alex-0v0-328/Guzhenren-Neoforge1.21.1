@@ -24,7 +24,7 @@ public class GuProperties {
         this.maxRefineEssencePerOp = b.maxRefineEssencePerOp;
     }
 
-    //region GETTER
+//region GETTER
     public Path getPath() { return path; }
     public Rank getRank() { return rank; }
     public GuType getType() { return type; }
@@ -37,8 +37,8 @@ public class GuProperties {
     public static Builder builder() { return new Builder(); }
 
     public static class Builder {
-        private Path path = Path.HUMAN;
-        private Rank rank = Rank.ONE;
+        private Path path;
+        private Rank rank;
         private GuType type = GuType.ONE_TIME;
         private boolean needFeed = false;
         private boolean needRefine = false;
@@ -50,12 +50,18 @@ public class GuProperties {
         public Builder type(GuType type) { this.type = type; return this; }
         public Builder needFeed(boolean v) { this.needFeed = v; return this; }
         public Builder needRefine(boolean v) { this.needRefine = v; return this; }
+
         public Builder refineConfig(int totalProgress, long maxEssencePerOp) {
             this.needRefine = true;
             this.totalRefineProgress = totalProgress;
             this.maxRefineEssencePerOp = maxEssencePerOp;
             return this;
         }
-        public GuProperties build() { return new GuProperties(this); }
+
+        public GuProperties build() {
+            if (path == null) throw new IllegalStateException("GuProperties.Builder: path is required");
+            if (rank == null) throw new IllegalStateException("GuProperties.Builder: rank is required");
+            return new GuProperties(this);
+        }
     }
 }

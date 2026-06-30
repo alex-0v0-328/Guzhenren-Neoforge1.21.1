@@ -17,7 +17,6 @@ import net.alex.guzhenren.network.sync.PathDeltaSyncPayload;
 import net.alex.guzhenren.network.sync.PathSyncPayload;
 import net.alex.guzhenren.network.sync.SoulSyncPayload;
 import net.alex.guzhenren.network.sync.StatusSyncPayload;
-import net.alex.guzhenren.registry.ModAttachments;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.GameRules;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -27,64 +26,80 @@ import net.neoforged.neoforge.event.entity.player.PlayerWakeUpEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 
+/**
+ * 玩家生命周期事件 handler:
+ * - tick: 自然恢复 + dirty sync + 死亡检测
+ * - login / respawn: full sync
+ * - clone: 死亡迁移 (按 keepInventory gamerule 决定 copy / reset)
+ * - wakeUp: 睡眠推进寿元
+ */
 @EventBusSubscriber(modid = Guzhenren.MOD_ID)
-public class ModPlayerEvents {
+public final class ModPlayerEvents {
+
+    private ModPlayerEvents() {}
 
     private static final int ESSENCE_NATURAL_SYNC_INTERVAL = 20;
     private static final int CORE_PATH_SYNC_INTERVAL = 20;
+    /** 玩家睡眠完整夜晚的 tick 数 (fallback, ServerPlayer.getSleepStartTime() 在 1.21.1 不可用) */
     private static final int FALLBACK_SLEEP_TICKS = 12000;
 
+//region TICK
     @SubscribeEvent
     public static void onPlayerTick(PlayerTickEvent.Post event) {
         if (!(event.getEntity() instanceof ServerPlayer sp)) return;
-        ModPlayerData data = sp.getData(ModAttachments.PLAYER_DATA.get());
+        ModPlayerData data = ModPlayerData.of(sp);
+        int adjustedTick = sp.tickCount + Math.floorMod(sp.getUUID().hashCode(), CORE_PATH_SYNC_INTERVAL);
 
-        int offset = sp.getUUID().hashCode() & 0x1F;
-        int adjustedTick = sp.tickCount + offset;
+        tickRegeneration(data);
+        syncImmediateChanges(sp, data);
+        if (checkDeath(sp)) return;
+        syncPeriodicChanges(sp, data, adjustedTick);
+    }
 
-        // 1. 自然真元恢复
+    private static void tickRegeneration(ModPlayerData data) {
         data.essence().naturalRecoveryPerTick();
-
-        // 2. 自然衰老
         data.lifespan().advanceTicks(1);
+    }
 
-        // 3. Status 立即同步
+    private static void syncImmediateChanges(ServerPlayer sp, ModPlayerData data) {
         if (data.status().isDirty()) {
             PacketDistributor.sendToPlayer(sp, new StatusSyncPayload(data.status()));
             data.status().clearDirty();
         }
-
-        // 4. Essence / Lifespan / Soul 主动改动立即同步 (先 sync 再死亡检测!)
-        if (data.essence().isActionDirty()) {
+        if (data.essence().isDirty()) {
             PacketDistributor.sendToPlayer(sp, new EssenceSyncPayload(data.essence()));
-            data.essence().clearActionDirty();
+            data.essence().clearDirty();
         }
-        if (data.lifespan().isActionDirty()) {
+        if (data.lifespan().isDirty()) {
             PacketDistributor.sendToPlayer(sp, new LifespanSyncPayload(data.lifespan()));
-            data.lifespan().clearActionDirty();
+            data.lifespan().clearDirty();
         }
-        if (data.soul().isActionDirty()) {
+        if (data.soul().isDirty()) {
             PacketDistributor.sendToPlayer(sp, new SoulSyncPayload(data.soul()));
-            data.soul().clearActionDirty();
+            data.soul().clearDirty();
         }
+    }
 
-        // 5. 死亡检测 (放在 sync 之后, 玩家死前能看到 0)
-        if (PlayerLifespanActions.checkAndKillIfDepleted(sp)) return;
-        if (PlayerSoulActions.checkAndKillIfCollapsed(sp)) return;
+    /** 死亡检测放在 sync 之后, 让玩家死前能看到数值归零 */
+    private static boolean checkDeath(ServerPlayer sp) {
+        if (PlayerLifespanActions.checkAndKillIfDepleted(sp)) return true;
+        return PlayerSoulActions.checkAndKillIfCollapsed(sp);
+    }
 
-        // 6. Essence 自然恢复周期同步
+    private static void syncPeriodicChanges(ServerPlayer sp, ModPlayerData data, int adjustedTick) {
         if (adjustedTick % ESSENCE_NATURAL_SYNC_INTERVAL == 0) {
             PacketDistributor.sendToPlayer(sp, new EssenceSyncPayload(data.essence()));
         }
-
-        // 7. Core / Path 节流同步
         if (adjustedTick % CORE_PATH_SYNC_INTERVAL == 0) {
-            if (data.core().isDirty()) {
-                PacketDistributor.sendToPlayer(sp, new CoreSyncPayload(data.core()));
-                data.core().clearDirty();
-            }
+            syncCore(sp, data);
             syncPath(sp, data);
         }
+    }
+
+    private static void syncCore(ServerPlayer sp, ModPlayerData data) {
+        if (!data.core().isDirty()) return;
+        PacketDistributor.sendToPlayer(sp, new CoreSyncPayload(data.core()));
+        data.core().clearDirty();
     }
 
     private static void syncPath(ServerPlayer sp, ModPlayerData data) {
@@ -103,33 +118,37 @@ public class ModPlayerEvents {
         PacketDistributor.sendToPlayer(sp, new PathDeltaSyncPayload(deltas));
         path.clearDirty();
     }
+//endregion
 
+//region LIFECYCLE
     @SubscribeEvent
     public static void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
-        if (!(event.getEntity() instanceof ServerPlayer sp)) return;
-        ModPlayerData data = sp.getData(ModAttachments.PLAYER_DATA.get());
-        PacketDistributor.sendToPlayer(sp, new ModPlayerSyncPayload(data));
+        if (event.getEntity() instanceof ServerPlayer sp) sendFullSync(sp);
     }
 
     @SubscribeEvent
     public static void onPlayerRespawn(PlayerEvent.PlayerRespawnEvent event) {
-        if (!(event.getEntity() instanceof ServerPlayer sp)) return;
-        ModPlayerData data = sp.getData(ModAttachments.PLAYER_DATA.get());
-        PacketDistributor.sendToPlayer(sp, new ModPlayerSyncPayload(data));
+        if (event.getEntity() instanceof ServerPlayer sp) sendFullSync(sp);
     }
 
+    /**
+     * 死亡迁移逻辑:
+     * - wasDeath = false (维度切换等): 总是 copy
+     * - wasDeath = true + keepInventory = true: copy (保留修为)
+     * - wasDeath = true + keepInventory = false: 早返回, 让 attachment 默认 reset 为 default 实例
+     */
     @SubscribeEvent
     public static void onPlayerClone(PlayerEvent.Clone event) {
         if (!(event.getEntity() instanceof ServerPlayer newPlayer)) return;
         if (!(event.getOriginal() instanceof ServerPlayer oldPlayer)) return;
 
         if (event.isWasDeath()) {
-            boolean keep = newPlayer.level().getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY);
+            boolean keep = newPlayer.serverLevel().getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY);
             if (!keep) return;
         }
 
-        ModPlayerData oldData = oldPlayer.getData(ModAttachments.PLAYER_DATA.get());
-        ModPlayerData newData = newPlayer.getData(ModAttachments.PLAYER_DATA.get());
+        ModPlayerData oldData = ModPlayerData.of(oldPlayer);
+        ModPlayerData newData = ModPlayerData.of(newPlayer);
         newData.copyFrom(oldData);
     }
 
@@ -138,8 +157,14 @@ public class ModPlayerEvents {
         if (!(event.getEntity() instanceof ServerPlayer sp)) return;
         if (event.wakeImmediately()) return;
 
-        ModPlayerData data = sp.getData(ModAttachments.PLAYER_DATA.get());
+        ModPlayerData data = ModPlayerData.of(sp);
         boolean depleted = data.lifespan().advanceTicks(FALLBACK_SLEEP_TICKS);
         if (depleted) PlayerLifespanActions.checkAndKillIfDepleted(sp);
     }
+
+    private static void sendFullSync(ServerPlayer sp) {
+        ModPlayerData data = ModPlayerData.of(sp);
+        PacketDistributor.sendToPlayer(sp, new ModPlayerSyncPayload(data));
+    }
+//endregion
 }

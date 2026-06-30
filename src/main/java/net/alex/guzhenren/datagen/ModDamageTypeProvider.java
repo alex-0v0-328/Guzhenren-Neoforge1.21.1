@@ -12,6 +12,7 @@ import net.minecraft.world.damagesource.DamageType;
 import net.neoforged.neoforge.common.data.DatapackBuiltinEntriesProvider;
 import org.jetbrains.annotations.NotNull;
 
+/** 注册自定义 DamageType JSON (lifespan_depleted / soul_collapsed) */
 public class ModDamageTypeProvider extends DatapackBuiltinEntriesProvider {
 
     private static final RegistrySetBuilder BUILDER = new RegistrySetBuilder()

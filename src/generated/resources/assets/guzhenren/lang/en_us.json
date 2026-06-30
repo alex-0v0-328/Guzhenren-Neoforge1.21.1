@@ -124,6 +124,7 @@
   "guzhenren.enum.path.path.wood": "Wood Path",
   "guzhenren.gu.tooltip.category.mortal": "Mortal Gu",
   "guzhenren.gu.tooltip.line": "%s %s %s",
+  "guzhenren.hud.essence": "%s / %s",
   "guzhenren.hud.lifespan": "Age: %s | Lifespan: %s",
   "guzhenren.hud.soul": "Soul: %s (%s)",
   "guzhenren.hud.talent": "Talent: %s",

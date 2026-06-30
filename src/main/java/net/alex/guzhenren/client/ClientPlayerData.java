@@ -10,7 +10,14 @@ import net.alex.guzhenren.gameplay.data.SoulComponent;
 import net.alex.guzhenren.gameplay.data.StatusComponent;
 import net.alex.guzhenren.network.sync.PathDelta;
 
-public class ClientPlayerData {
+/**
+ * 客户端镜像玩家数据
+ * 由 ClientPayloadHandlers 接收 server 端 SyncPayload 更新
+ * 由 PlayerStatsHud / 其他 client UI 读取
+ */
+public final class ClientPlayerData {
+
+    private ClientPlayerData() {}
 
     private static CoreComponent core = new CoreComponent();
     private static EssenceComponent essence = new EssenceComponent();
@@ -19,7 +26,7 @@ public class ClientPlayerData {
     private static LifespanComponent lifespan = new LifespanComponent();
     private static SoulComponent soul = new SoulComponent();
 
-    //region GETTER
+//region GETTER
     public static CoreComponent getCore() { return core; }
     public static EssenceComponent getEssence() { return essence; }
     public static StatusComponent getStatus() { return status; }
@@ -28,7 +35,7 @@ public class ClientPlayerData {
     public static SoulComponent getSoul() { return soul; }
 //endregion
 
-    //region SETTER
+//region SETTER
     public static void setCore(CoreComponent core) { ClientPlayerData.core = core; }
     public static void setEssence(EssenceComponent essence) { ClientPlayerData.essence = essence; }
     public static void setStatus(StatusComponent status) { ClientPlayerData.status = status; }

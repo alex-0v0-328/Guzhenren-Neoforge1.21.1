@@ -10,6 +10,8 @@ public class LifespanComponent {
             Codec.INT.fieldOf("age").forGetter(LifespanComponent::getAge),
             Codec.INT.fieldOf("tick_in_current_year").forGetter(LifespanComponent::getTickInCurrentYear)
     ).apply(i, LifespanComponent::new));
+
+    /** MC 一个游戏日 = 24000 ticks. 设计为 1 游戏日 = 角色 1 年 */
     private static final int TICKS_PER_YEAR = 24000;
     private static final int DEFAULT_MAX_LIFESPAN = 100;
     private static final int DEFAULT_AGE = 14;
@@ -17,7 +19,7 @@ public class LifespanComponent {
     private int maxLifespan;
     private int age;
     private int tickInCurrentYear;
-    private transient boolean actionDirty = false;
+    private transient boolean dirty = false;
 
     public LifespanComponent() {
         this(DEFAULT_MAX_LIFESPAN, DEFAULT_AGE, 0);
@@ -29,32 +31,33 @@ public class LifespanComponent {
         this.tickInCurrentYear = tickInCurrentYear;
     }
 
-    //region GETTER
+//region GETTER
     public int getMaxLifespan() { return maxLifespan; }
     public int getAge() { return age; }
     public int getTickInCurrentYear() { return tickInCurrentYear; }
     public int getRemainingYears() { return Math.max(0, maxLifespan - age); }
 //endregion
 
-    //region SETTER
+//region SETTER
+    /** 设置 maxLifespan, 内部 clamp 下限为 age (避免 maxLifespan < age 导致"已超寿但活着") */
     public void setMaxLifespan(int value) {
-        this.maxLifespan = Math.max(0, value);
-        actionDirty = true;
+        this.maxLifespan = Math.max(this.age, value);
+        dirty = true;
     }
 
     public void setAge(int value) {
         this.age = Math.max(0, value);
-        actionDirty = true;
+        dirty = true;
     }
 
     public void setTickInCurrentYear(int value) {
         this.tickInCurrentYear = Math.max(0, value);
-        actionDirty = true;
+        dirty = true;
     }
 
     /**
      * 推进当前年的 tick 计数, 满 TICKS_PER_YEAR 自动结算成 age + 1
-     * 返回 true 表示玩家已死 (age >= max)
+     * @return true 若玩家已死 (age >= max)
      */
     public boolean advanceTicks(int amount) {
         if (amount <= 0) return false;
@@ -65,12 +68,12 @@ public class LifespanComponent {
             age++;
             if (age >= maxLifespan) depleted = true;
         }
-        actionDirty = true;
+        dirty = true;
         return depleted;
     }
 //endregion
 
-    //region MAX LIFESPAN
+//region MAX LIFESPAN
     public void addMaxLifespan(int amount) {
         if (amount <= 0) return;
         setMaxLifespan(this.maxLifespan + amount);
@@ -78,31 +81,21 @@ public class LifespanComponent {
 
     public void subMaxLifespan(int amount) {
         if (amount <= 0) return;
-        setMaxLifespan(Math.max(this.age, this.maxLifespan - amount));
+        setMaxLifespan(this.maxLifespan - amount);
     }
 //endregion
 
-//region NATURAL AGING
-    /** 每 tick 累加, 满 24000 tick 长一岁; 返回 true 表示玩家已死(age >= max) */
-    public boolean naturalAgingPerTick() {
-        tickInCurrentYear++;
-        if (tickInCurrentYear < TICKS_PER_YEAR) return false;
-        tickInCurrentYear = 0;
-        age++;
-        actionDirty = true;
-        return age >= maxLifespan;
-    }
-
+//region RESET
     public void reset() {
         this.maxLifespan = DEFAULT_MAX_LIFESPAN;
         this.age = DEFAULT_AGE;
         this.tickInCurrentYear = 0;
-        actionDirty = true;
+        dirty = true;
     }
 //endregion
 
-    //region DIRTY
-    public boolean isActionDirty() { return actionDirty; }
-    public void clearActionDirty() { this.actionDirty = false; }
+//region DIRTY
+    public boolean isDirty() { return dirty; }
+    public void clearDirty() { this.dirty = false; }
 //endregion
 }

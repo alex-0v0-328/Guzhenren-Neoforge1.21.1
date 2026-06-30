@@ -9,10 +9,11 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
+/** Server → Client: 同步玩家全部数据 (用于 login / respawn full sync) */
 public record ModPlayerSyncPayload(ModPlayerData data) implements CustomPacketPayload {
 
     public static final CustomPacketPayload.Type<ModPlayerSyncPayload> TYPE =
-            new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(Guzhenren.MOD_ID, "sync_player_data"));
+            new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(Guzhenren.MOD_ID, "sync_player_full"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, ModPlayerSyncPayload> STREAM_CODEC =
             StreamCodec.composite(

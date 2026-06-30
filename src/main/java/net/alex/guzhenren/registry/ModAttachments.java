@@ -8,7 +8,10 @@ import net.neoforged.neoforge.attachment.AttachmentType;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
 
-public class ModAttachments {
+/** Attachment 注册中心. PLAYER_DATA 持久化玩家修为状态 */
+public final class ModAttachments {
+
+    private ModAttachments() {}
 
     public static final DeferredRegister<AttachmentType<?>> ATTACHMENT_TYPES =
             DeferredRegister.create(NeoForgeRegistries.ATTACHMENT_TYPES, Guzhenren.MOD_ID);

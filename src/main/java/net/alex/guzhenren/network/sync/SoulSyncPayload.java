@@ -9,6 +9,7 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
+/** Server → Client: 同步魂魄数值 */
 public record SoulSyncPayload(SoulComponent data) implements CustomPacketPayload {
 
     public static final CustomPacketPayload.Type<SoulSyncPayload> TYPE =

@@ -9,6 +9,7 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
+/** Server → Client: 同步核心修为 (rank / stage / talent / physique / baseEssence) */
 public record CoreSyncPayload(CoreComponent data) implements CustomPacketPayload {
 
     public static final CustomPacketPayload.Type<CoreSyncPayload> TYPE =

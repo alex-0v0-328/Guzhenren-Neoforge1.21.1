@@ -9,6 +9,7 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
+/** Server → Client: 同步玩家状态 (开窍标志等) */
 public record StatusSyncPayload(StatusComponent data) implements CustomPacketPayload {
 
     public static final CustomPacketPayload.Type<StatusSyncPayload> TYPE =

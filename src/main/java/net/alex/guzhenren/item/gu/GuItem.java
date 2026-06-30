@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class GuItem extends Item {
 
-    private static final int DEFAULT_COOLDOWN_TICKS = 2;
+    private static final int COOLDOWN_TICKS = 2;
 
     private final GuProperties guProps;
     private final GuEffect effect;
@@ -57,7 +57,7 @@ public class GuItem extends Item {
         }
         // TODO: REUSABLE 类型扣耐久
 
-        sp.getCooldowns().addCooldown(this, DEFAULT_COOLDOWN_TICKS);
+        sp.getCooldowns().addCooldown(this, COOLDOWN_TICKS);
         return InteractionResultHolder.consume(stack);
     }
 
@@ -65,6 +65,7 @@ public class GuItem extends Item {
     public void appendHoverText(@NotNull ItemStack stack, @NotNull TooltipContext context,
                                 @NotNull List<Component> tooltip, @NotNull TooltipFlag flag) {
         super.appendHoverText(stack, context, tooltip, flag);
+        // TODO: rank 6-10 时切换 category (immortal_gu)
         tooltip.add(Component.translatable("guzhenren.gu.tooltip.line",
                 Component.translatable(guProps.getPath().getTranslationKey()),
                 Component.translatable(guProps.getRank().getTranslationKey()),

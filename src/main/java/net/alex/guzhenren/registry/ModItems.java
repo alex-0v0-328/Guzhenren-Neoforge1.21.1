@@ -14,37 +14,40 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
-public class ModItems {
+/**
+ * Item 注册中心
+ * - MATERIALS: 通用材料 (如 essence_stone)
+ * - MORTAL GU: 凡蛊系列, 按 path 分组
+ */
+public final class ModItems {
+
+    private ModItems() {}
 
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(Guzhenren.MOD_ID);
 
-    //region MATERIALS
+//region MATERIALS
     public static final DeferredItem<EssenceStoneItem> ESSENCE_STONE =
             ITEMS.register("essence_stone", () -> new EssenceStoneItem(new Item.Properties().stacksTo(64)));
 //endregion
 
-    //region MORTAL GU - HUMAN PATH
+//region MORTAL GU - HUMAN PATH
     public static final DeferredItem<GuItem> HOPE_GU =
             registerMortalGu("hope_gu", Path.HUMAN, Rank.ONE, GuEffects.AWAKEN,
                     "hope_gu.use_success", "hope_gu.use_failed");
 //endregion
 
-    //region MORTAL GU - HEAVEN PATH (LIFESPAN)
+//region MORTAL GU - HEAVEN PATH (LIFESPAN)
     public static final DeferredItem<GuItem> LIFESPAN_GU           = registerLifespanGu("lifespan_gu",            1,  9);
     public static final DeferredItem<GuItem> TEN_YEARS_LIFESPAN_GU = registerLifespanGu("ten_years_lifespan_gu", 10, 99);
 //endregion
 
-    //region MORTAL GU - HEAVEN PATH (RELICS)
+//region MORTAL GU - HEAVEN PATH (RELICS)
     public static final DeferredItem<GuItem> COPPER_RELICS_GU  = registerRelicsGu("copper_relics_gu",  Rank.ONE);
     public static final DeferredItem<GuItem> STEEL_RELICS_GU   = registerRelicsGu("steel_relics_gu",   Rank.TWO);
     public static final DeferredItem<GuItem> SILVER_RELICS_GU  = registerRelicsGu("silver_relics_gu",  Rank.THREE);
     public static final DeferredItem<GuItem> GOLD_RELICS_GU    = registerRelicsGu("gold_relics_gu",    Rank.FOUR);
     public static final DeferredItem<GuItem> CRYSTAL_RELICS_GU = registerRelicsGu("crystal_relics_gu", Rank.FIVE);
 //endregion
-
-    public static void register(IEventBus modEventBus) {
-        ITEMS.register(modEventBus);
-    }
 
 //region HELPERS
     /** 注册一只通用一次性凡蛊 */
@@ -75,4 +78,8 @@ public class ModItems {
                 "relics_gu.use_success", null);
     }
 //endregion
+
+    public static void register(IEventBus modEventBus) {
+        ITEMS.register(modEventBus);
+    }
 }

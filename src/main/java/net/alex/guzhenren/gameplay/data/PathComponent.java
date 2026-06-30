@@ -36,12 +36,12 @@ public class PathComponent {
         return d;
     }
 
-    //region GETTER
+//region GETTER
     public Attainment getAttainment(Path path) { return attainments.get(path); }
     public long getMarks(Path path) { return marks.get(path); }
 //endregion
 
-    //region SETTER
+//region SETTER
     public void setAttainment(Path path, Attainment attainment) {
         attainments.put(path, attainment);
         dirtyPaths.add(path);
@@ -53,7 +53,7 @@ public class PathComponent {
     }
 //endregion
 
-    //region MARKS
+//region MARKS
     public void addMarks(Path path, long amount) {
         if (amount <= 0L) return;
         marks.computeIfPresent(path, (k, cur) -> cur + amount);
@@ -67,10 +67,22 @@ public class PathComponent {
     }
 //endregion
 
-    //region DIRTY
+//region RESET
+    /** 重置所有 path 到 ORDINARY/0, 并标 forceFullSync */
+    public void reset() {
+        for (Path p : Path.values()) {
+            attainments.put(p, Attainment.ORDINARY);
+            marks.put(p, 0L);
+        }
+        forceFullSync = true;
+    }
+//endregion
+
+//region DIRTY
     public EnumSet<Path> getDirtyPaths() { return dirtyPaths; }
     public boolean isForceFullSync() { return forceFullSync; }
     public void markFullSync() { this.forceFullSync = true; }
+
     public void clearDirty() {
         dirtyPaths.clear();
         forceFullSync = false;

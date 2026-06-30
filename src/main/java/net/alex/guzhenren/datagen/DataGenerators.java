@@ -10,8 +10,11 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
 
+/** DataGen 入口. 注册 lang / item model / damage type / damage type tag provider */
 @EventBusSubscriber(modid = Guzhenren.MOD_ID)
-public class DataGenerators {
+public final class DataGenerators {
+
+    private DataGenerators() {}
 
     @SubscribeEvent
     public static void gatherData(GatherDataEvent event) {

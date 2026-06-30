@@ -3,6 +3,8 @@ package net.alex.guzhenren.gameplay.data;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.alex.guzhenren.enums.path.Path;
+import net.alex.guzhenren.registry.ModAttachments;
+import net.minecraft.server.level.ServerPlayer;
 
 public record ModPlayerData(CoreComponent core, EssenceComponent essence, StatusComponent status,
                             PathComponent path, LifespanComponent lifespan, SoulComponent soul) {
@@ -21,6 +23,15 @@ public record ModPlayerData(CoreComponent core, EssenceComponent essence, Status
                 new PathComponent(), new LifespanComponent(), new SoulComponent());
     }
 
+    /** 静态入口: 从 ServerPlayer 获取 attachment 数据. 替代 player.getData(ModAttachments.PLAYER_DATA.get()) 模板 */
+    public static ModPlayerData of(ServerPlayer player) {
+        return player.getData(ModAttachments.PLAYER_DATA.get());
+    }
+
+    /**
+     * 把 src 的所有状态复制到当前实例, 用于 PlayerEvent.Clone 死亡 keepInventory 场景.
+     * 完成后清掉所有 component 的 dirty 标记 (由 respawn 触发的 full sync 接管).
+     */
     public void copyFrom(ModPlayerData src) {
         this.core.setPlayerRank(src.core.getPlayerRank());
         this.core.setPlayerStage(src.core.getPlayerStage());
@@ -33,11 +44,11 @@ public record ModPlayerData(CoreComponent core, EssenceComponent essence, Status
                 src.core.getPlayerRank(),
                 src.core.getPlayerStage()
         );
-        this.essence.addCurrent(src.essence.getCurrentEssence());
+        this.essence.setCurrentEssenceRaw(src.essence.getCurrentEssence());
 
         this.status.setApertureAwakened(src.status.isApertureAwakened());
 
-        for (var p : Path.values()) {
+        for (Path p : Path.values()) {
             this.path.setAttainment(p, src.path.getAttainment(p));
             this.path.setMarks(p, src.path.getMarks(p));
         }
@@ -49,9 +60,10 @@ public record ModPlayerData(CoreComponent core, EssenceComponent essence, Status
         this.soul.setSoul(src.soul.getSoul());
 
         this.core.clearDirty();
+        this.essence.clearDirty();
         this.status.clearDirty();
         this.path.clearDirty();
-        this.lifespan.clearActionDirty();
-        this.soul.clearActionDirty();
+        this.lifespan.clearDirty();
+        this.soul.clearDirty();
     }
 }

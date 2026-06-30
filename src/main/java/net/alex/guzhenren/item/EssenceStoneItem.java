@@ -2,7 +2,6 @@ package net.alex.guzhenren.item;
 
 import net.alex.guzhenren.gameplay.data.EssenceComponent;
 import net.alex.guzhenren.gameplay.data.ModPlayerData;
-import net.alex.guzhenren.registry.ModAttachments;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -16,7 +15,8 @@ import org.jetbrains.annotations.NotNull;
 public class EssenceStoneItem extends Item {
 
     private static final int COOLDOWN_TICKS = 2;
-    private static final long RECOVERY_DIVISOR = 20L;
+    /** 用 USES_TO_REFILL 次回满: 每次回复 = maxEssence / USES_TO_REFILL */
+    private static final long USES_TO_REFILL = 20L;
 
     public EssenceStoneItem(Properties properties) {
         super(properties);
@@ -27,7 +27,7 @@ public class EssenceStoneItem extends Item {
         ItemStack stack = player.getItemInHand(hand);
         if (!(player instanceof ServerPlayer sp)) return InteractionResultHolder.success(stack);
 
-        ModPlayerData data = sp.getData(ModAttachments.PLAYER_DATA.get());
+        ModPlayerData data = ModPlayerData.of(sp);
 
         if (!data.status().isApertureAwakened()) {
             sp.displayClientMessage(Component.translatable("item.guzhenren.essence_stone.use_failed.not_awakened"), true);
@@ -40,7 +40,7 @@ public class EssenceStoneItem extends Item {
             return InteractionResultHolder.fail(stack);
         }
 
-        float recovery = (float) essence.getMaxEssence() / RECOVERY_DIVISOR;
+        float recovery = (float) essence.getMaxEssence() / USES_TO_REFILL;
         essence.addCurrent(recovery);
 
         if (!sp.getAbilities().instabuild) {

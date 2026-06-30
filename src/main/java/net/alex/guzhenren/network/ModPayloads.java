@@ -15,8 +15,11 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 
+/** Network payload 注册中心. 所有 sync payload 为 server → client 单向 */
 @EventBusSubscriber(modid = Guzhenren.MOD_ID)
-public class ModPayloads {
+public final class ModPayloads {
+
+    private ModPayloads() {}
 
     private static final String PROTOCOL_VERSION = "1";
 
@@ -25,7 +28,7 @@ public class ModPayloads {
         PayloadRegistrar reg = event.registrar(PROTOCOL_VERSION);
 
         reg.playToClient(ModPlayerSyncPayload.TYPE, ModPlayerSyncPayload.STREAM_CODEC,
-                ClientPayloadHandlers::handleFullSync);
+                ClientPayloadHandlers::handlePlayerFull);
         reg.playToClient(CoreSyncPayload.TYPE, CoreSyncPayload.STREAM_CODEC,
                 ClientPayloadHandlers::handleCore);
         reg.playToClient(EssenceSyncPayload.TYPE, EssenceSyncPayload.STREAM_CODEC,

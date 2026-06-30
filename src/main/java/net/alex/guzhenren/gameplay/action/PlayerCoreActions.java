@@ -5,19 +5,20 @@ import net.alex.guzhenren.enums.core.Rank;
 import net.alex.guzhenren.enums.core.Stage;
 import net.alex.guzhenren.enums.core.Talent;
 import net.alex.guzhenren.enums.core.TenExtreme;
-import net.alex.guzhenren.enums.path.Attainment;
-import net.alex.guzhenren.enums.path.Path;
 import net.alex.guzhenren.gameplay.data.CoreComponent;
 import net.alex.guzhenren.gameplay.data.ModPlayerData;
-import net.alex.guzhenren.registry.ModAttachments;
 import net.minecraft.server.level.ServerPlayer;
 
-public class PlayerCoreActions {
+/** 玩家核心修为 (rank / stage / talent / physique / baseEssence) 操作入口 */
+public final class PlayerCoreActions {
+
+    private PlayerCoreActions() {}
 
     private static final List<Rank> RANK_ORDER = List.of(Rank.ONE, Rank.TWO, Rank.THREE, Rank.FOUR, Rank.FIVE);
     private static final List<Stage> STAGE_ORDER = List.of(Stage.INIT, Stage.MIDDLE, Stage.UPPER, Stage.PEAK);
 
-    //region PRECONDITION
+//region PRECONDITION
+    /** 检查是否可开窍 (未开窍 + 所有 core 字段为初始值) */
     public static boolean canAwaken(ModPlayerData data) {
         return !data.status().isApertureAwakened()
                 && data.core().getPlayerTalent() == Talent.NONE
@@ -31,22 +32,20 @@ public class PlayerCoreActions {
     }
 //endregion
 
-    //region AWAKEN
+//region AWAKEN
+    /** 随机 talent + 随机 percent 开窍 */
     public static void awaken(ServerPlayer player) {
-        Talent t = Talent.randomNonNone();
-        doAwaken(player, t, Talent.randomPercent(t));
+        awaken(player, Talent.randomNonNone());
     }
 
+    /** 指定 talent, 随机 percent 开窍 */
     public static void awaken(ServerPlayer player, Talent talent) {
-        doAwaken(player, talent, Talent.randomPercent(talent));
+        awaken(player, talent, Talent.randomPercent(talent));
     }
 
+    /** 指定 talent + percent 开窍 (核心实现) */
     public static void awaken(ServerPlayer player, Talent talent, int percent) {
-        doAwaken(player, talent, percent);
-    }
-
-    private static void doAwaken(ServerPlayer player, Talent talent, int percent) {
-        ModPlayerData data = player.getData(ModAttachments.PLAYER_DATA.get());
+        ModPlayerData data = ModPlayerData.of(player);
         CoreComponent c = data.core();
         c.setPlayerTalent(talent);
         c.setPlayerBaseEssence(percent);
@@ -59,17 +58,19 @@ public class PlayerCoreActions {
     }
 //endregion
 
-    //region RANK / STAGE
+//region RANK / STAGE
+    /** @return false 若已是最高 rank */
     public static boolean rankUp(ServerPlayer player) {
-        ModPlayerData data = player.getData(ModAttachments.PLAYER_DATA.get());
+        ModPlayerData data = ModPlayerData.of(player);
         int idx = RANK_ORDER.indexOf(data.core().getPlayerRank());
         if (idx == -1 || idx >= RANK_ORDER.size() - 1) return false;
         setRank(player, RANK_ORDER.get(idx + 1));
         return true;
     }
 
+    /** @return false 若已是最低 rank */
     public static boolean rankDown(ServerPlayer player) {
-        ModPlayerData data = player.getData(ModAttachments.PLAYER_DATA.get());
+        ModPlayerData data = ModPlayerData.of(player);
         int idx = RANK_ORDER.indexOf(data.core().getPlayerRank());
         if (idx <= 0) return false;
         setRank(player, RANK_ORDER.get(idx - 1));
@@ -77,21 +78,23 @@ public class PlayerCoreActions {
     }
 
     public static void setRank(ServerPlayer player, Rank rank) {
-        ModPlayerData data = player.getData(ModAttachments.PLAYER_DATA.get());
+        ModPlayerData data = ModPlayerData.of(player);
         data.core().setPlayerRank(rank);
         recomputeMax(data);
     }
 
+    /** @return false 若已是 PEAK stage */
     public static boolean stageUp(ServerPlayer player) {
-        ModPlayerData data = player.getData(ModAttachments.PLAYER_DATA.get());
+        ModPlayerData data = ModPlayerData.of(player);
         int idx = STAGE_ORDER.indexOf(data.core().getPlayerStage());
         if (idx == -1 || idx >= STAGE_ORDER.size() - 1) return false;
         setStage(player, STAGE_ORDER.get(idx + 1));
         return true;
     }
 
+    /** @return false 若已是 INIT stage */
     public static boolean stageDown(ServerPlayer player) {
-        ModPlayerData data = player.getData(ModAttachments.PLAYER_DATA.get());
+        ModPlayerData data = ModPlayerData.of(player);
         int idx = STAGE_ORDER.indexOf(data.core().getPlayerStage());
         if (idx <= 0) return false;
         setStage(player, STAGE_ORDER.get(idx - 1));
@@ -99,15 +102,15 @@ public class PlayerCoreActions {
     }
 
     public static void setStage(ServerPlayer player, Stage stage) {
-        ModPlayerData data = player.getData(ModAttachments.PLAYER_DATA.get());
+        ModPlayerData data = ModPlayerData.of(player);
         data.core().setPlayerStage(stage);
         recomputeMax(data);
     }
 //endregion
 
-    //region TALENT / BASE / PHYSIQUE
+//region TALENT / BASE / PHYSIQUE
     public static void setTalent(ServerPlayer player, Talent talent) {
-        ModPlayerData data = player.getData(ModAttachments.PLAYER_DATA.get());
+        ModPlayerData data = ModPlayerData.of(player);
         CoreComponent c = data.core();
         c.setPlayerTalent(talent);
         c.setPlayerBaseEssence(Talent.randomPercent(talent));
@@ -116,21 +119,21 @@ public class PlayerCoreActions {
     }
 
     public static void addBaseEssence(ServerPlayer player, int amount) {
-        ModPlayerData data = player.getData(ModAttachments.PLAYER_DATA.get());
+        ModPlayerData data = ModPlayerData.of(player);
         data.core().addPlayerBaseEssence(amount);
         ensurePhysiqueIfTenExtreme(data);
         recomputeMax(data);
     }
 
     public static void subBaseEssence(ServerPlayer player, int amount) {
-        ModPlayerData data = player.getData(ModAttachments.PLAYER_DATA.get());
+        ModPlayerData data = ModPlayerData.of(player);
         data.core().subPlayerBaseEssence(amount);
         ensurePhysiqueIfTenExtreme(data);
         recomputeMax(data);
     }
 
     public static void setPhysique(ServerPlayer player, TenExtreme physique) {
-        ModPlayerData data = player.getData(ModAttachments.PLAYER_DATA.get());
+        ModPlayerData data = ModPlayerData.of(player);
         CoreComponent c = data.core();
         c.setPlayerTalent(Talent.TEN_EXTREME);
         c.setPlayerBaseEssence(100);
@@ -139,28 +142,20 @@ public class PlayerCoreActions {
     }
 //endregion
 
-    //region RESET
+//region RESET
+    /** 全部数据重置. 委托给各 component 的 reset() */
     public static void reset(ServerPlayer player) {
-        ModPlayerData data = player.getData(ModAttachments.PLAYER_DATA.get());
-        CoreComponent c = data.core();
-        c.setPlayerRank(Rank.MORTAL);
-        c.setPlayerStage(Stage.NONE);
-        c.setPlayerTalent(Talent.NONE);
-        c.setPlayerExtremePhysique(TenExtreme.NONE);
-        c.setPlayerBaseEssence(0);
-        data.essence().recomputeMaxEssence(0, Rank.MORTAL, Stage.NONE);
-        data.status().setApertureAwakened(false);
-        for (Path p : Path.values()) {
-            data.path().setAttainment(p, Attainment.ORDINARY);
-            data.path().setMarks(p, 0L);
-        }
-        data.path().markFullSync();
+        ModPlayerData data = ModPlayerData.of(player);
+        data.core().reset();
+        data.essence().reset();
+        data.status().reset();
+        data.path().reset();
         data.lifespan().reset();
         data.soul().reset();
     }
 //endregion
 
-    //region HELPERS
+//region HELPERS
     private static void recomputeMax(ModPlayerData data) {
         data.essence().recomputeMaxEssence(
                 data.core().getPlayerBaseEssence(),

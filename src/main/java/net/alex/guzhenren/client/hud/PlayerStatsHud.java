@@ -12,8 +12,13 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.LayeredDraw;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * 玩家修为 / 真元 / 寿元 / 魂魄 HUD
+ * 显示位置: 屏幕左上角 (over hotbar layer)
+ */
 public class PlayerStatsHud implements LayeredDraw.Layer {
 
     private static final int MARGIN_X = 4;
@@ -21,9 +26,10 @@ public class PlayerStatsHud implements LayeredDraw.Layer {
     private static final int LINE_HEIGHT = 10;
     private static final int BAR_WIDTH = 80;
     private static final int BAR_HEIGHT = 6;
-    private static final int BAR_BG_COLOR = 0xFF555555;
-    private static final int BAR_FG_COLOR = 0xFF40C4FF;
-    private static final int TEXT_COLOR = 0xFFFFFFFF;
+    private static final int BAR_TEXT_GAP = 2;
+    private static final int BAR_BG_COLOR = 0xFF555555;  // 灰色背景
+    private static final int BAR_FG_COLOR = 0xFF40C4FF;  // 青色填充 (essence 主题色)
+    private static final int TEXT_COLOR   = 0xFFFFFFFF;  // 白色文字
 
     @Override
     public void render(@NotNull GuiGraphics gui, @NotNull DeltaTracker delta) {
@@ -38,26 +44,26 @@ public class PlayerStatsHud implements LayeredDraw.Layer {
 
         int y = MARGIN_Y;
 
-        // Line 1: 修为
+        // 修为 (rank + stage)
         Component rankStage = Component.translatable(core.getPlayerRank().getTranslationKey())
                 .append(Component.literal(" "))
                 .append(Component.translatable(core.getPlayerStage().getTranslationKey()));
         gui.drawString(mc.font, rankStage, MARGIN_X, y, TEXT_COLOR);
         y += LINE_HEIGHT;
 
-        // Line 2: 资质
-        Component talentMsg = Component.translatable(core.getPlayerTalent().getTranslationKey())
-                .copy().append(Component.literal(" " + core.getPlayerBaseEssence() + "%"));
+        // 资质 (talent + percent + physique)
+        MutableComponent talentMsg = Component.translatable(core.getPlayerTalent().getTranslationKey())
+                .append(Component.literal(" " + core.getPlayerBaseEssence() + "%"));
         TenExtreme physique = core.getPlayerExtremePhysique();
         if (physique != TenExtreme.NONE) {
-            talentMsg = talentMsg.copy().append(Component.literal(" ["))
+            talentMsg.append(Component.literal(" ["))
                     .append(Component.translatable(physique.getTranslationKey()))
                     .append(Component.literal("]"));
         }
         gui.drawString(mc.font, Component.translatable("guzhenren.hud.talent", talentMsg), MARGIN_X, y, TEXT_COLOR);
         y += LINE_HEIGHT;
 
-        // Line 3 + 4: 真元条 + 数值 (仅开窍时)
+        // 真元条 + 数值 (仅开窍后)
         if (awakened) {
             long max = essence.getMaxEssence();
             float cur = essence.getCurrentEssence();
@@ -66,20 +72,21 @@ public class PlayerStatsHud implements LayeredDraw.Layer {
 
             gui.fill(MARGIN_X, y, MARGIN_X + BAR_WIDTH, y + BAR_HEIGHT, BAR_BG_COLOR);
             gui.fill(MARGIN_X, y, MARGIN_X + fillWidth, y + BAR_HEIGHT, BAR_FG_COLOR);
-            y += BAR_HEIGHT + 2;
+            y += BAR_HEIGHT + BAR_TEXT_GAP;
 
-            String text = String.format("%d / %d", (long) cur, max);
-            gui.drawString(mc.font, text, MARGIN_X, y, TEXT_COLOR);
+            gui.drawString(mc.font,
+                    Component.translatable("guzhenren.hud.essence", (long) cur, max),
+                    MARGIN_X, y, TEXT_COLOR);
             y += LINE_HEIGHT;
         }
 
-        // Line 5: 年龄 + 寿元
+        // 寿元 (年龄 + 剩余年数)
         gui.drawString(mc.font,
                 Component.translatable("guzhenren.hud.lifespan", lifespan.getAge(), lifespan.getRemainingYears()),
                 MARGIN_X, y, TEXT_COLOR);
         y += LINE_HEIGHT;
 
-        // Line 6: 魂魄
+        // 魂魄 (level + 数值)
         SoulLevel soulLevel = SoulLevel.fromSoulValue(soul.getSoul());
         gui.drawString(mc.font,
                 Component.translatable("guzhenren.hud.soul",

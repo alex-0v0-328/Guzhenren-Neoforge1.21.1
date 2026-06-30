@@ -8,10 +8,11 @@ public class SoulComponent {
     public static final Codec<SoulComponent> CODEC = RecordCodecBuilder.create(i -> i.group(
             Codec.LONG.fieldOf("soul").forGetter(SoulComponent::getSoul)
     ).apply(i, SoulComponent::new));
+
     private static final long DEFAULT_SOUL = 100L;
 
     private long soul;
-    private transient boolean actionDirty = false;
+    private transient boolean dirty = false;
 
     public SoulComponent() {
         this(DEFAULT_SOUL);
@@ -21,18 +22,18 @@ public class SoulComponent {
         this.soul = soul;
     }
 
-    //region GETTER
+//region GETTER
     public long getSoul() { return soul; }
 //endregion
 
-    //region SETTER
+//region SETTER
     public void setSoul(long value) {
         this.soul = Math.max(0L, value);
-        actionDirty = true;
+        dirty = true;
     }
 //endregion
 
-    //region SOUL
+//region SOUL
     public void addSoul(long amount) {
         if (amount <= 0L) return;
         setSoul(this.soul + amount);
@@ -42,15 +43,16 @@ public class SoulComponent {
         if (amount <= 0L) return;
         setSoul(this.soul - amount);
     }
+//endregion
 
+//region RESET
     public void reset() {
-        this.soul = DEFAULT_SOUL;
-        actionDirty = true;
+        setSoul(DEFAULT_SOUL);
     }
 //endregion
 
-    //region DIRTY
-    public boolean isActionDirty() { return actionDirty; }
-    public void clearActionDirty() { this.actionDirty = false; }
+//region DIRTY
+    public boolean isDirty() { return dirty; }
+    public void clearDirty() { this.dirty = false; }
 //endregion
 }

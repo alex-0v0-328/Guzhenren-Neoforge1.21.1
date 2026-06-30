@@ -10,8 +10,10 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import org.slf4j.Logger;
 
+/** Mod 主入口. 注册 attachment / item / creative tab. event handler 走 @EventBusSubscriber */
 @Mod(Guzhenren.MOD_ID)
 public class Guzhenren {
+
     public static final String MOD_ID = "guzhenren";
     public static final Logger LOGGER = LogUtils.getLogger();
 

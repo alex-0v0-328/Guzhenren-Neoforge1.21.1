@@ -16,14 +16,13 @@ public class StatusComponent {
         this.apertureAwakened = false;
     }
 
+    /** Codec 反序列化专用. 外部代码请用无参构造 + setter */
     public StatusComponent(boolean apertureAwakened) {
         this.apertureAwakened = apertureAwakened;
     }
 
-    //region AWAKEN APERTURE
-    public boolean isApertureAwakened() {
-        return apertureAwakened;
-    }
+//region AWAKEN APERTURE
+    public boolean isApertureAwakened() { return apertureAwakened; }
 
     public void setApertureAwakened(boolean awakened) {
         this.apertureAwakened = awakened;
@@ -31,13 +30,15 @@ public class StatusComponent {
     }
 //endregion
 
-    //region DIRTY
-    public boolean isDirty() {
-        return dirty;
+//region RESET
+    public void reset() {
+        this.apertureAwakened = false;
+        this.dirty = true;
     }
+//endregion
 
-    public void clearDirty() {
-        this.dirty = false;
-    }
+//region DIRTY
+    public boolean isDirty() { return dirty; }
+    public void clearDirty() { this.dirty = false; }
 //endregion
 }
