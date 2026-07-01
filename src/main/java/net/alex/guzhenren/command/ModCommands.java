@@ -12,13 +12,16 @@ import net.alex.guzhenren.gameplay.data.LifespanComponent;
 import net.alex.guzhenren.gameplay.data.ModPlayerData;
 import net.alex.guzhenren.gameplay.data.PathComponent;
 import net.alex.guzhenren.gameplay.data.SoulComponent;
-import net.alex.guzhenren.registry.ModAttachments;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerPlayer;
 
-public class ModCommands {
+/** /guzhenren 根命令. 子命令 build 器分散在 CoreCommands / EssenceCommands / PathCommands / LifespanCommands / SoulCommands */
+public final class ModCommands {
+
+    private ModCommands() {}
 
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(
@@ -39,7 +42,7 @@ public class ModCommands {
         );
     }
 
-    //region INFO
+//region INFO
     private static LiteralArgumentBuilder<CommandSourceStack> buildInfo() {
         return Commands.literal("info").executes(ctx -> cmdInfo(ctx.getSource()));
     }
@@ -47,7 +50,7 @@ public class ModCommands {
     private static int cmdInfo(CommandSourceStack src) {
         ServerPlayer player = src.getPlayer();
         if (player == null) return 0;
-        ModPlayerData data = player.getData(ModAttachments.PLAYER_DATA.get());
+        ModPlayerData data = ModPlayerData.of(player);
         CoreComponent core = data.core();
         EssenceComponent essence = data.essence();
         PathComponent path = data.path();
@@ -58,11 +61,11 @@ public class ModCommands {
                 Component.translatable(core.getPlayerRank().getTranslationKey()),
                 Component.translatable(core.getPlayerStage().getTranslationKey())), false);
 
-        Component talentMsg = Component.translatable(core.getPlayerTalent().getTranslationKey())
-                .copy().append(Component.literal(" " + core.getPlayerBaseEssence() + "%"));
+        MutableComponent talentMsg = Component.translatable(core.getPlayerTalent().getTranslationKey())
+                .append(Component.literal(" " + core.getPlayerBaseEssence() + "%"));
         TenExtreme physique = core.getPlayerExtremePhysique();
         if (physique != TenExtreme.NONE) {
-            talentMsg = talentMsg.copy().append(Component.literal(" ["))
+            talentMsg.append(Component.literal(" ["))
                     .append(Component.translatable(physique.getTranslationKey()))
                     .append(Component.literal("]"));
         }
@@ -71,7 +74,7 @@ public class ModCommands {
 
         if (data.status().isApertureAwakened()) {
             src.sendSuccess(() -> Component.translatable("guzhenren.command.info.essence",
-                    (long) essence.getCurrentEssence(), essence.getMaxEssence()), false);
+                    essence.getCurrentEssence(), essence.getMaxEssence()), false);
         } else {
             src.sendSuccess(() -> Component.translatable("guzhenren.command.info.not_awakened"), false);
         }
@@ -98,7 +101,7 @@ public class ModCommands {
     }
 //endregion
 
-    //region RESET
+//region RESET
     private static LiteralArgumentBuilder<CommandSourceStack> buildReset() {
         return Commands.literal("reset").executes(ctx -> cmdReset(ctx.getSource()));
     }
@@ -112,9 +115,10 @@ public class ModCommands {
     }
 //endregion
 
-    //region HELPERS
+//region HELPERS
+    /** 命令 helper: 检查玩家是否已开窍, 未开窍时 send failure + return false */
     static boolean requireAwakened(CommandSourceStack src, ServerPlayer player) {
-        ModPlayerData data = player.getData(ModAttachments.PLAYER_DATA.get());
+        ModPlayerData data = ModPlayerData.of(player);
         if (!PlayerCoreActions.isAwakened(data)) {
             src.sendFailure(Component.translatable("guzhenren.command.error.not_awakened"));
             return false;

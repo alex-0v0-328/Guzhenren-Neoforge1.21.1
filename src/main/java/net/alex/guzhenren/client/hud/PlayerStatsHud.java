@@ -66,8 +66,8 @@ public class PlayerStatsHud implements LayeredDraw.Layer {
         // 真元条 + 数值 (仅开窍后)
         if (awakened) {
             long max = essence.getMaxEssence();
-            float cur = essence.getCurrentEssence();
-            float ratio = max > 0 ? Math.min(1f, cur / (float) max) : 0f;
+            long cur = essence.getCurrentEssence();
+            float ratio = max > 0 ? Math.min(1f, (float) cur / max) : 0f;
             int fillWidth = (int) (BAR_WIDTH * ratio);
 
             gui.fill(MARGIN_X, y, MARGIN_X + BAR_WIDTH, y + BAR_HEIGHT, BAR_BG_COLOR);
@@ -75,7 +75,7 @@ public class PlayerStatsHud implements LayeredDraw.Layer {
             y += BAR_HEIGHT + BAR_TEXT_GAP;
 
             gui.drawString(mc.font,
-                    Component.translatable("guzhenren.hud.essence", (long) cur, max),
+                    Component.translatable("guzhenren.hud.essence", cur, max),
                     MARGIN_X, y, TEXT_COLOR);
             y += LINE_HEIGHT;
         }

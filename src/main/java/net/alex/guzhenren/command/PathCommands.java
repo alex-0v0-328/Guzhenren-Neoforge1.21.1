@@ -5,14 +5,17 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import net.alex.guzhenren.enums.path.Attainment;
 import net.alex.guzhenren.enums.path.Path;
 import net.alex.guzhenren.gameplay.action.PlayerPathActions;
-import net.alex.guzhenren.registry.ModAttachments;
+import net.alex.guzhenren.gameplay.data.ModPlayerData;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.server.command.EnumArgument;
 
-public class PathCommands {
+/** 流派命令: add / sub / set / up / down. 所有子命令 requireAwakened */
+public final class PathCommands {
+
+    private PathCommands() {}
 
     public static LiteralArgumentBuilder<CommandSourceStack> buildPath() {
         return Commands.literal("path")
@@ -79,7 +82,7 @@ public class PathCommands {
             src.sendFailure(Component.translatable("guzhenren.command.error.path_attainment_up_failed"));
             return 0;
         }
-        Attainment now = player.getData(ModAttachments.PLAYER_DATA.get()).path().getAttainment(path);
+        Attainment now = ModPlayerData.of(player).path().getAttainment(path);
         src.sendSuccess(() -> Component.translatable("guzhenren.command.success.path_attainment_up",
                 Component.translatable(path.getTranslationKey()),
                 Component.translatable(now.getTranslationKey())), false);
@@ -93,7 +96,7 @@ public class PathCommands {
             src.sendFailure(Component.translatable("guzhenren.command.error.path_attainment_down_failed"));
             return 0;
         }
-        Attainment now = player.getData(ModAttachments.PLAYER_DATA.get()).path().getAttainment(path);
+        Attainment now = ModPlayerData.of(player).path().getAttainment(path);
         src.sendSuccess(() -> Component.translatable("guzhenren.command.success.path_attainment_down",
                 Component.translatable(path.getTranslationKey()),
                 Component.translatable(now.getTranslationKey())), false);

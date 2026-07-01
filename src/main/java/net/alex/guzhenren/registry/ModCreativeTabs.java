@@ -31,14 +31,7 @@ public final class ModCreativeTabs {
                     .title(Component.translatable("guzhenren.itemGroup.mortal_gu"))
                     .icon(() -> new ItemStack(ModItems.HOPE_GU.get()))
                     .displayItems((parameters, output) -> {
-                        output.accept(ModItems.HOPE_GU.get());
-                        output.accept(ModItems.LIFESPAN_GU.get());
-                        output.accept(ModItems.TEN_YEARS_LIFESPAN_GU.get());
-                        output.accept(ModItems.COPPER_RELICS_GU.get());
-                        output.accept(ModItems.STEEL_RELICS_GU.get());
-                        output.accept(ModItems.SILVER_RELICS_GU.get());
-                        output.accept(ModItems.GOLD_RELICS_GU.get());
-                        output.accept(ModItems.CRYSTAL_RELICS_GU.get());
+                        ModItems.MORTAL_GU_LIST.forEach(deferred -> output.accept(deferred.get()));
                     })
                     .build());
 

@@ -2,6 +2,7 @@ package net.alex.guzhenren.enums.core;
 
 import com.mojang.serialization.Codec;
 import java.util.concurrent.ThreadLocalRandom;
+import net.alex.guzhenren.util.EnumUtils;
 import net.minecraft.util.StringRepresentable;
 import org.jetbrains.annotations.NotNull;
 
@@ -15,6 +16,7 @@ public enum Talent implements StringRepresentable {
     NONE(0, 0);
 
     public static final Codec<Talent> CODEC = StringRepresentable.fromEnum(Talent::values);
+    private static final String KEY_PREFIX = "guzhenren.enum.core.talent.";
 
     private final int minPercent;
     private final int maxPercent;
@@ -30,7 +32,7 @@ public enum Talent implements StringRepresentable {
     @Override
     public @NotNull String getSerializedName() { return name().toLowerCase(); }
 
-    public String getTranslationKey() { return "guzhenren.enum.core.talent." + name().toLowerCase(); }
+    public String getTranslationKey() { return KEY_PREFIX + name().toLowerCase(); }
 
     /** 在 talent 区间内 roll 一个百分比 (0-100) */
     public static int randomPercent(Talent talent) {
@@ -48,11 +50,6 @@ public enum Talent implements StringRepresentable {
 
     /** 随机一个非 NONE 的 talent */
     public static Talent randomNonNone() {
-        Talent[] vals = values();
-        Talent t;
-        do {
-            t = vals[ThreadLocalRandom.current().nextInt(vals.length)];
-        } while (t == NONE);
-        return t;
+        return EnumUtils.randomExcept(values(), NONE);
     }
 }

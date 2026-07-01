@@ -20,9 +20,10 @@ public enum Path implements StringRepresentable {
     LUCK, KILLING, BLOOD, SOUL, ENSLAVEMENT;
 
     public static final Codec<Path> CODEC = StringRepresentable.fromEnum(Path::values);
+    private static final String KEY_PREFIX = "guzhenren.enum.path.path.";
 
     @Override
     public @NotNull String getSerializedName() { return name().toLowerCase(); }
 
-    public String getTranslationKey() { return "guzhenren.enum.path.path." + name().toLowerCase(); }
+    public String getTranslationKey() { return KEY_PREFIX + name().toLowerCase(); }
 }

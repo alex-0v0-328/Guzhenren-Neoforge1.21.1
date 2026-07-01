@@ -7,6 +7,8 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.DamageTypeTagsProvider;
 import net.minecraft.tags.DamageTypeTags;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.damagesource.DamageType;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import org.jetbrains.annotations.NotNull;
 
@@ -20,16 +22,15 @@ public class ModDamageTypeTagProvider extends DamageTypeTagsProvider {
 
     @Override
     protected void addTags(HolderLookup.@NotNull Provider provider) {
-        tag(DamageTypeTags.BYPASSES_ARMOR)
-                .add(ModDamageTypes.LIFESPAN_DEPLETED)
-                .add(ModDamageTypes.SOUL_COLLAPSED);
-        tag(DamageTypeTags.BYPASSES_EFFECTS)
-                .add(ModDamageTypes.LIFESPAN_DEPLETED)
-                .add(ModDamageTypes.SOUL_COLLAPSED);
-        tag(DamageTypeTags.BYPASSES_ENCHANTMENTS)
-                .add(ModDamageTypes.LIFESPAN_DEPLETED)
-                .add(ModDamageTypes.SOUL_COLLAPSED);
-        tag(DamageTypeTags.NO_KNOCKBACK)
+        addBoth(DamageTypeTags.BYPASSES_ARMOR);
+        addBoth(DamageTypeTags.BYPASSES_EFFECTS);
+        addBoth(DamageTypeTags.BYPASSES_ENCHANTMENTS);
+        addBoth(DamageTypeTags.NO_KNOCKBACK);
+    }
+
+    /** 把 LIFESPAN_DEPLETED + SOUL_COLLAPSED 同时加入指定 tag */
+    private void addBoth(TagKey<DamageType> tag) {
+        tag(tag)
                 .add(ModDamageTypes.LIFESPAN_DEPLETED)
                 .add(ModDamageTypes.SOUL_COLLAPSED);
     }

@@ -17,6 +17,7 @@ public enum SoulLevel implements StringRepresentable {
     HUNDRED_MILLION  (10_000_000_000L);
 
     public static final Codec<SoulLevel> CODEC = StringRepresentable.fromEnum(SoulLevel::values);
+    private static final String KEY_PREFIX = "guzhenren.enum.core.soul_level.";
 
     private final long threshold;
 
@@ -29,7 +30,7 @@ public enum SoulLevel implements StringRepresentable {
     @Override
     public @NotNull String getSerializedName() { return name().toLowerCase(); }
 
-    public String getTranslationKey() { return "guzhenren.enum.core.soul_level." + name().toLowerCase(); }
+    public String getTranslationKey() { return KEY_PREFIX + name().toLowerCase(); }
 
     /** 向下取整返回 soul 对应的最高 level. 任意 soul 都返回 ONE_PERSON 或以上 */
     public static SoulLevel fromSoulValue(long soul) {

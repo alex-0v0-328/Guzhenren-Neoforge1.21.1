@@ -13,6 +13,7 @@ public enum Stage implements StringRepresentable {
     PEAK(8);
 
     public static final Codec<Stage> CODEC = StringRepresentable.fromEnum(Stage::values);
+    private static final String KEY_PREFIX = "guzhenren.enum.core.stage.";
 
     private final int essenceMultiplier;
 
@@ -25,5 +26,5 @@ public enum Stage implements StringRepresentable {
     @Override
     public @NotNull String getSerializedName() { return name().toLowerCase(); }
 
-    public String getTranslationKey() { return "guzhenren.enum.core.stage." + name().toLowerCase(); }
+    public String getTranslationKey() { return KEY_PREFIX + name().toLowerCase(); }
 }

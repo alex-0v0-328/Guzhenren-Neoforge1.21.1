@@ -4,6 +4,7 @@ import com.mojang.serialization.Codec;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 import net.alex.guzhenren.enums.path.Path;
+import net.alex.guzhenren.util.EnumUtils;
 import net.minecraft.util.StringRepresentable;
 import org.jetbrains.annotations.NotNull;
 
@@ -23,6 +24,7 @@ public enum TenExtreme implements StringRepresentable {
     NONE;
 
     public static final Codec<TenExtreme> CODEC = StringRepresentable.fromEnum(TenExtreme::values);
+    private static final String KEY_PREFIX = "guzhenren.enum.core.ten_extreme.";
 
     private final List<Path> talentPaths;
 
@@ -35,15 +37,10 @@ public enum TenExtreme implements StringRepresentable {
     @Override
     public @NotNull String getSerializedName() { return name().toLowerCase(); }
 
-    public String getTranslationKey() { return "guzhenren.enum.core.ten_extreme." + name().toLowerCase(); }
+    public String getTranslationKey() { return KEY_PREFIX + name().toLowerCase(); }
 
     /** 随机一个非 NONE 的体质 */
     public static TenExtreme randomNonNone() {
-        TenExtreme[] vals = values();
-        TenExtreme t;
-        do {
-            t = vals[ThreadLocalRandom.current().nextInt(vals.length)];
-        } while (t == NONE);
-        return t;
+        return EnumUtils.randomExcept(values(), NONE);
     }
 }

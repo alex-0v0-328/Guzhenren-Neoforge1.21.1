@@ -12,9 +12,10 @@ public enum GuType implements StringRepresentable {
     REUSABLE;
 
     public static final Codec<GuType> CODEC = StringRepresentable.fromEnum(GuType::values);
+    private static final String KEY_PREFIX = "guzhenren.enum.gu.type.";
 
     @Override
     public @NotNull String getSerializedName() { return name().toLowerCase(); }
 
-    public String getTranslationKey() { return "guzhenren.enum.gu.type." + name().toLowerCase(); }
+    public String getTranslationKey() { return KEY_PREFIX + name().toLowerCase(); }
 }

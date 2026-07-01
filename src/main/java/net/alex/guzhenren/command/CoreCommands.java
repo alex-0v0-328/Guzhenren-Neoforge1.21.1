@@ -8,16 +8,18 @@ import net.alex.guzhenren.enums.core.Talent;
 import net.alex.guzhenren.enums.core.TenExtreme;
 import net.alex.guzhenren.gameplay.action.PlayerCoreActions;
 import net.alex.guzhenren.gameplay.data.ModPlayerData;
-import net.alex.guzhenren.registry.ModAttachments;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.server.command.EnumArgument;
 
-public class CoreCommands {
+/** 修为核心命令: awaken / rank / stage / talent / base / physique */
+public final class CoreCommands {
 
-    //region AWAKEN
+    private CoreCommands() {}
+
+//region AWAKEN
     public static LiteralArgumentBuilder<CommandSourceStack> buildAwaken() {
         return Commands.literal("awaken")
                 .executes(ctx -> cmdAwaken(ctx.getSource(), null, -1))
@@ -32,7 +34,7 @@ public class CoreCommands {
     private static int cmdAwaken(CommandSourceStack src, Talent talent, int percent) {
         ServerPlayer player = src.getPlayer();
         if (player == null) return 0;
-        ModPlayerData data = player.getData(ModAttachments.PLAYER_DATA.get());
+        ModPlayerData data = ModPlayerData.of(player);
         if (!PlayerCoreActions.canAwaken(data)) {
             src.sendFailure(Component.translatable("guzhenren.command.error.cannot_awaken"));
             return 0;
@@ -58,7 +60,7 @@ public class CoreCommands {
     }
 //endregion
 
-    //region RANK
+//region RANK
     public static LiteralArgumentBuilder<CommandSourceStack> buildRank() {
         return Commands.literal("rank")
                 .then(Commands.literal("set")
@@ -88,7 +90,7 @@ public class CoreCommands {
             src.sendFailure(Component.translatable("guzhenren.command.error.rank_up_failed"));
             return 0;
         }
-        Rank now = player.getData(ModAttachments.PLAYER_DATA.get()).core().getPlayerRank();
+        Rank now = ModPlayerData.of(player).core().getPlayerRank();
         src.sendSuccess(() -> Component.translatable("guzhenren.command.success.rank_up",
                 Component.translatable(now.getTranslationKey())), false);
         return 1;
@@ -101,14 +103,14 @@ public class CoreCommands {
             src.sendFailure(Component.translatable("guzhenren.command.error.rank_down_failed"));
             return 0;
         }
-        Rank now = player.getData(ModAttachments.PLAYER_DATA.get()).core().getPlayerRank();
+        Rank now = ModPlayerData.of(player).core().getPlayerRank();
         src.sendSuccess(() -> Component.translatable("guzhenren.command.success.rank_down",
                 Component.translatable(now.getTranslationKey())), false);
         return 1;
     }
 //endregion
 
-    //region STAGE
+//region STAGE
     public static LiteralArgumentBuilder<CommandSourceStack> buildStage() {
         return Commands.literal("stage")
                 .then(Commands.literal("set")
@@ -138,7 +140,7 @@ public class CoreCommands {
             src.sendFailure(Component.translatable("guzhenren.command.error.stage_up_failed"));
             return 0;
         }
-        Stage now = player.getData(ModAttachments.PLAYER_DATA.get()).core().getPlayerStage();
+        Stage now = ModPlayerData.of(player).core().getPlayerStage();
         src.sendSuccess(() -> Component.translatable("guzhenren.command.success.stage_up",
                 Component.translatable(now.getTranslationKey())), false);
         return 1;
@@ -151,14 +153,14 @@ public class CoreCommands {
             src.sendFailure(Component.translatable("guzhenren.command.error.stage_down_failed"));
             return 0;
         }
-        Stage now = player.getData(ModAttachments.PLAYER_DATA.get()).core().getPlayerStage();
+        Stage now = ModPlayerData.of(player).core().getPlayerStage();
         src.sendSuccess(() -> Component.translatable("guzhenren.command.success.stage_down",
                 Component.translatable(now.getTranslationKey())), false);
         return 1;
     }
 //endregion
 
-    //region TALENT
+//region TALENT
     public static LiteralArgumentBuilder<CommandSourceStack> buildTalent() {
         return Commands.literal("talent")
                 .then(Commands.literal("set")
@@ -180,7 +182,7 @@ public class CoreCommands {
     }
 //endregion
 
-    //region BASE
+//region BASE
     public static LiteralArgumentBuilder<CommandSourceStack> buildBase() {
         return Commands.literal("base")
                 .then(Commands.literal("add").then(Commands.argument("amount", IntegerArgumentType.integer(1))
@@ -206,7 +208,7 @@ public class CoreCommands {
     }
 //endregion
 
-    //region PHYSIQUE
+//region PHYSIQUE
     public static LiteralArgumentBuilder<CommandSourceStack> buildPhysique() {
         return Commands.literal("physique")
                 .then(Commands.literal("set")

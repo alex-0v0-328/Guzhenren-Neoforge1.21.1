@@ -9,46 +9,48 @@ public class EssenceComponent {
 
     public static final Codec<EssenceComponent> CODEC = RecordCodecBuilder.create(i -> i.group(
             Codec.LONG.fieldOf("max_essence").forGetter(EssenceComponent::getMaxEssence),
-            Codec.FLOAT.fieldOf("current_essence").forGetter(EssenceComponent::getCurrentEssence)
+            Codec.LONG.fieldOf("current_essence").forGetter(EssenceComponent::getCurrentEssence)
     ).apply(i, EssenceComponent::new));
 
     /** MC 一个游戏日 = 24000 ticks. essence 设计为每游戏日回满 */
     private static final int TICKS_PER_DAY = 24000;
 
     private long maxEssence;
-    private float currentEssence;
+    private long currentEssence;
+    /** natural recovery 累积小数缓冲. 满 1.0 入账到 currentEssence */
+    private transient double accumulatedRecovery = 0.0;
     private transient boolean dirty = false;
 
     public EssenceComponent() {
-        this(0L, 0f);
+        this(0L, 0L);
     }
 
-    public EssenceComponent(long maxEssence, float currentEssence) {
+    public EssenceComponent(long maxEssence, long currentEssence) {
         this.maxEssence = maxEssence;
         this.currentEssence = currentEssence;
     }
 
 //region GETTER
     public long getMaxEssence() { return maxEssence; }
-    public float getCurrentEssence() { return currentEssence; }
+    public long getCurrentEssence() { return currentEssence; }
 //endregion
 
 //region CURRENT ESSENCE
-    public void addCurrent(float amount) {
-        if (amount <= 0f) return;
+    public void addCurrent(long amount) {
+        if (amount <= 0L) return;
         currentEssence = Math.min(maxEssence, currentEssence + amount);
         dirty = true;
     }
 
-    public void subCurrent(float amount) {
-        if (amount <= 0f) return;
-        currentEssence = Math.max(0f, currentEssence - amount);
+    public void subCurrent(long amount) {
+        if (amount <= 0L) return;
+        currentEssence = Math.max(0L, currentEssence - amount);
         dirty = true;
     }
 
     /** 包私有 raw setter, 仅供 ModPlayerData.copyFrom 使用. 外部禁用 */
-    void setCurrentEssenceRaw(float value) {
-        this.currentEssence = Math.clamp(value, 0f, maxEssence);
+    void setCurrentEssenceRaw(long value) {
+        this.currentEssence = Math.clamp(value, 0L, maxEssence);
         dirty = true;
     }
 //endregion
@@ -60,10 +62,15 @@ public class EssenceComponent {
         dirty = true;
     }
 
+    /** 内部用 double 累积小数, 满 1.0 才入账, 避免 long division 丢失精度 */
     public void naturalRecoveryPerTick() {
         if (maxEssence <= 0L) return;
-        float perTick = (float) maxEssence / TICKS_PER_DAY;
-        currentEssence = Math.min(maxEssence, currentEssence + perTick);
+        accumulatedRecovery += (double) maxEssence / TICKS_PER_DAY;
+        long whole = (long) accumulatedRecovery;
+        if (whole > 0L) {
+            accumulatedRecovery -= whole;
+            currentEssence = Math.min(maxEssence, currentEssence + whole);
+        }
         // 不标 dirty: natural recovery 走周期 sync
     }
 
@@ -75,7 +82,8 @@ public class EssenceComponent {
     /** 重置到初始状态. 调 caller 负责后续 recomputeMaxEssence */
     public void reset() {
         this.maxEssence = 0L;
-        this.currentEssence = 0f;
+        this.currentEssence = 0L;
+        this.accumulatedRecovery = 0.0;
         dirty = true;
     }
 //endregion

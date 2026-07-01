@@ -11,6 +11,8 @@ public class StatusComponent {
 
     private boolean apertureAwakened;
     private transient boolean dirty = false;
+    /** 死因 flag: true 表示上次死亡是寿元耗尽或魂魄衰竭. 不持久化, 仅供 PlayerEvent.Clone 读取 */
+    private transient boolean deathByLifespanOrSoul = false;
 
     public StatusComponent() {
         this.apertureAwakened = false;
@@ -28,6 +30,12 @@ public class StatusComponent {
         this.apertureAwakened = awakened;
         this.dirty = true;
     }
+//endregion
+
+//region DEATH FLAG
+    public boolean isDeathByLifespanOrSoul() { return deathByLifespanOrSoul; }
+    public void markDeathByLifespanOrSoul() { this.deathByLifespanOrSoul = true; }
+    public void clearDeathByLifespanOrSoul() { this.deathByLifespanOrSoul = false; }
 //endregion
 
 //region RESET

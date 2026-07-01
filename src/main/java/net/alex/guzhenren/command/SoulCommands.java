@@ -2,13 +2,16 @@ package net.alex.guzhenren.command;
 
 import com.mojang.brigadier.arguments.LongArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import net.alex.guzhenren.gameplay.action.PlayerSoulActions;
+import net.alex.guzhenren.gameplay.data.ModPlayerData;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 
-public class SoulCommands {
+/** 魂魄命令: add / sub / reset. 不 require 开窍 (凡人也有魂魄) */
+public final class SoulCommands {
+
+    private SoulCommands() {}
 
     public static LiteralArgumentBuilder<CommandSourceStack> buildSoul() {
         return Commands.literal("soul")
@@ -22,7 +25,7 @@ public class SoulCommands {
     private static int cmdAdd(CommandSourceStack src, long amount) {
         ServerPlayer player = src.getPlayer();
         if (player == null) return 0;
-        PlayerSoulActions.addSoul(player, amount);
+        ModPlayerData.of(player).soul().addSoul(amount);
         src.sendSuccess(() -> Component.translatable("guzhenren.command.success.soul_added", amount), false);
         return 1;
     }
@@ -30,7 +33,7 @@ public class SoulCommands {
     private static int cmdSub(CommandSourceStack src, long amount) {
         ServerPlayer player = src.getPlayer();
         if (player == null) return 0;
-        PlayerSoulActions.subSoul(player, amount);
+        ModPlayerData.of(player).soul().subSoul(amount);
         src.sendSuccess(() -> Component.translatable("guzhenren.command.success.soul_subbed", amount), false);
         return 1;
     }
@@ -38,7 +41,7 @@ public class SoulCommands {
     private static int cmdReset(CommandSourceStack src) {
         ServerPlayer player = src.getPlayer();
         if (player == null) return 0;
-        PlayerSoulActions.reset(player);
+        ModPlayerData.of(player).soul().reset();
         src.sendSuccess(() -> Component.translatable("guzhenren.command.success.soul_reset"), false);
         return 1;
     }

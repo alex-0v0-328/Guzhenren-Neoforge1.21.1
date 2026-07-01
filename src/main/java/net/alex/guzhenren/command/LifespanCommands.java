@@ -2,13 +2,16 @@ package net.alex.guzhenren.command;
 
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import net.alex.guzhenren.gameplay.action.PlayerLifespanActions;
+import net.alex.guzhenren.gameplay.data.ModPlayerData;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 
-public class LifespanCommands {
+/** 寿元命令: add / sub / setAge / reset. 不 require 开窍 (凡人也有寿元) */
+public final class LifespanCommands {
+
+    private LifespanCommands() {}
 
     public static LiteralArgumentBuilder<CommandSourceStack> buildLifespan() {
         return Commands.literal("lifespan")
@@ -24,7 +27,7 @@ public class LifespanCommands {
     private static int cmdAddMax(CommandSourceStack src, int amount) {
         ServerPlayer player = src.getPlayer();
         if (player == null) return 0;
-        PlayerLifespanActions.addMaxLifespan(player, amount);
+        ModPlayerData.of(player).lifespan().addMaxLifespan(amount);
         src.sendSuccess(() -> Component.translatable("guzhenren.command.success.lifespan_added", amount), false);
         return 1;
     }
@@ -32,7 +35,7 @@ public class LifespanCommands {
     private static int cmdSubMax(CommandSourceStack src, int amount) {
         ServerPlayer player = src.getPlayer();
         if (player == null) return 0;
-        PlayerLifespanActions.subMaxLifespan(player, amount);
+        ModPlayerData.of(player).lifespan().subMaxLifespan(amount);
         src.sendSuccess(() -> Component.translatable("guzhenren.command.success.lifespan_subbed", amount), false);
         return 1;
     }
@@ -40,7 +43,7 @@ public class LifespanCommands {
     private static int cmdSetAge(CommandSourceStack src, int age) {
         ServerPlayer player = src.getPlayer();
         if (player == null) return 0;
-        PlayerLifespanActions.setAge(player, age);
+        ModPlayerData.of(player).lifespan().setAge(age);
         src.sendSuccess(() -> Component.translatable("guzhenren.command.success.age_set", age), false);
         return 1;
     }
@@ -48,7 +51,7 @@ public class LifespanCommands {
     private static int cmdReset(CommandSourceStack src) {
         ServerPlayer player = src.getPlayer();
         if (player == null) return 0;
-        PlayerLifespanActions.reset(player);
+        ModPlayerData.of(player).lifespan().reset();
         src.sendSuccess(() -> Component.translatable("guzhenren.command.success.lifespan_reset"), false);
         return 1;
     }

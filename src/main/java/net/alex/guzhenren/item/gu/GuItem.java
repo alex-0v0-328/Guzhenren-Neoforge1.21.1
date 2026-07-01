@@ -2,63 +2,40 @@ package net.alex.guzhenren.item.gu;
 
 import java.util.List;
 import net.alex.guzhenren.enums.gu.GuType;
+import net.alex.guzhenren.item.AbstractModItem;
+import net.alex.guzhenren.item.ItemUseResult;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResultHolder;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
-public class GuItem extends Item {
-
-    private static final int COOLDOWN_TICKS = 2;
+/** 蛊虫物品. use 逻辑委托给 GuEffect, tooltip 显示 path/rank/category */
+public class GuItem extends AbstractModItem {
 
     private final GuProperties guProps;
     private final GuEffect effect;
-    private final String successMessageKey;
-    private final String failMessageKey;
 
     public GuItem(Properties properties, GuProperties guProps, GuEffect effect,
                   String successMessageKey, String failMessageKey) {
-        super(properties);
+        super(properties, successMessageKey, failMessageKey);
         this.guProps = guProps;
         this.effect = effect;
-        this.successMessageKey = successMessageKey;
-        this.failMessageKey = failMessageKey;
     }
 
     public GuProperties getGuProps() { return guProps; }
 
     @Override
-    public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level level, Player player, @NotNull InteractionHand hand) {
-        ItemStack stack = player.getItemInHand(hand);
-        if (!(player instanceof ServerPlayer sp)) return InteractionResultHolder.success(stack);
-
+    protected ItemUseResult doUse(ServerPlayer sp, ItemStack stack) {
         // TODO: 喂食检查 (needFeed)
         // TODO: 炼化检查 (needRefine)
+        return effect.apply(sp);
+    }
 
-        GuEffectResult result = effect.apply(sp);
-        if (!result.success()) {
-            String key = result.overrideMessageKey() != null ? result.overrideMessageKey() : failMessageKey;
-            if (key != null) sp.displayClientMessage(Component.translatable(key), true);
-            return InteractionResultHolder.fail(stack);
-        }
-
-        if (successMessageKey != null) {
-            sp.displayClientMessage(Component.translatable(successMessageKey, result.messageArgs()), true);
-        }
-
-        if (guProps.getType() == GuType.ONE_TIME && !sp.getAbilities().instabuild) {
-            stack.shrink(1);
-        }
-        // TODO: REUSABLE 类型扣耐久
-
-        sp.getCooldowns().addCooldown(this, COOLDOWN_TICKS);
-        return InteractionResultHolder.consume(stack);
+    @Override
+    protected boolean shouldConsume(ItemUseResult result) {
+        return guProps.getType() == GuType.ONE_TIME;
+        // TODO: REUSABLE 类型扣耐久 (需 override use 或加更细粒度 hook)
     }
 
     @Override

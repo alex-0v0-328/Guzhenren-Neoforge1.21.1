@@ -15,6 +15,7 @@ public enum Rank implements StringRepresentable {
     FIVE(5, 1_000_000L);
 
     public static final Codec<Rank> CODEC = StringRepresentable.fromEnum(Rank::values);
+    private static final String KEY_PREFIX = "guzhenren.enum.core.rank.";
 
     private final int rankNum;
     private final long essenceBase;
@@ -30,5 +31,5 @@ public enum Rank implements StringRepresentable {
     @Override
     public @NotNull String getSerializedName() { return name().toLowerCase(); }
 
-    public String getTranslationKey() { return "guzhenren.enum.core.rank." + name().toLowerCase(); }
+    public String getTranslationKey() { return KEY_PREFIX + name().toLowerCase(); }
 }

@@ -17,6 +17,7 @@ public enum Attainment implements StringRepresentable {
     SUPREME_GRANDMASTER       (9, false);
 
     public static final Codec<Attainment> CODEC = StringRepresentable.fromEnum(Attainment::values);
+    private static final String KEY_PREFIX = "guzhenren.enum.path.attainment.";
 
     private final int level;
     private final boolean quasi;
@@ -32,5 +33,5 @@ public enum Attainment implements StringRepresentable {
     @Override
     public @NotNull String getSerializedName() { return name().toLowerCase(); }
 
-    public String getTranslationKey() { return "guzhenren.enum.path.attainment." + name().toLowerCase(); }
+    public String getTranslationKey() { return KEY_PREFIX + name().toLowerCase(); }
 }

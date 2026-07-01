@@ -1,5 +1,6 @@
 package net.alex.guzhenren.registry;
 
+import java.util.List;
 import net.alex.guzhenren.Guzhenren;
 import net.alex.guzhenren.enums.core.Rank;
 import net.alex.guzhenren.enums.gu.GuType;
@@ -48,6 +49,13 @@ public final class ModItems {
     public static final DeferredItem<GuItem> GOLD_RELICS_GU    = registerRelicsGu("gold_relics_gu",    Rank.FOUR);
     public static final DeferredItem<GuItem> CRYSTAL_RELICS_GU = registerRelicsGu("crystal_relics_gu", Rank.FIVE);
 //endregion
+
+    /** MORTAL_GU tab 显示顺序. 与 ModCreativeTabs.MORTAL_GU 联动 */
+    public static final List<DeferredItem<GuItem>> MORTAL_GU_LIST = List.of(
+            HOPE_GU,
+            LIFESPAN_GU, TEN_YEARS_LIFESPAN_GU,
+            COPPER_RELICS_GU, STEEL_RELICS_GU, SILVER_RELICS_GU, GOLD_RELICS_GU, CRYSTAL_RELICS_GU
+    );
 
 //region HELPERS
     /** 注册一只通用一次性凡蛊 */
